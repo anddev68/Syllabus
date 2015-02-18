@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:text="教科名"
+            android:id="@+id/textView9"
+            android:gravity="center"
+            android:textSize="30dp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/td_detail"
+                android:text=""
+                android:id="@+id/textView" />
+
+            <TextView
+                style="@style/td_detail"
+                android:text="スコア"
+                android:id="@+id/textView6" />
+
+            <TextView
+                style="@style/td_detail"
+                android:text="最大値"
+                android:id="@+id/textView7" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/hr"
+            android:id="@+id/line1" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                style="@style/td_detail"
+                android:text="前期中間"
+                android:id="@+id/textView8" />
+
+            <TextView
+                style="@style/td_detail"
+                android:text="0"
+                android:id="@+id/textView10" />
+
+            <TextView
+                style="@style/td_detail"
+                android:text="0"
+                android:id="@+id/textView11" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                style="@style/td_detail"
+                android:text="前期期末"
+                android:id="@+id/text1_0" />
+
+            <TextView
+                style="@style/td_detail"
+                android:text="0"
+                android:id="@+id/text1_1" />
+
+            <TextView
+                style="@style/td_detail"
+                android:text="0"
+                android:id="@+id/text1_2" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                style="@style/td_detail"
+                android:text="後期中間"
+                android:id="@+id/text2_0" />
+
+            <TextView
+                style="@style/td_detail"
+                android:text="0"
+                android:id="@+id/text2_1" />
+
+            <TextView
+                style="@style/td_detail"
+                android:text="0"
+                android:id="@+id/text2_2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                style="@style/td_detail"
+                android:text="後期期末"
+                android:id="@+id/text3_0" />
+
+            <TextView
+                style="@style/td_detail"
+                android:text="0"
+                android:id="@+id/text3_1" />
+
+            <TextView
+                style="@style/td_detail"
+                android:text="0"
+                android:id="@+id/text3_2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                style="@style/td_detail"
+                android:text="課題"
+                android:id="@+id/text4_0" />
+
+            <TextView
+                style="@style/td_detail"
+                android:text="0"
+                android:id="@+id/text4_1" />
+
+            <TextView
+                style="@style/td_detail"
+                android:text="0"
+                android:id="@+id/text4_2" />
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/hr"
+            android:id="@+id/line2"
+            android:layout_marginBottom="10dp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="目標単位："
+                android:id="@+id/textView12"
+                android:paddingRight="5dp"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="6"
+                android:id="@+id/textView13"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <SeekBar
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekBar"
+            android:max="10"
+            android:progress="6" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>

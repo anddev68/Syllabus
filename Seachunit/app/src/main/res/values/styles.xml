@@ -1,0 +1,70 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <!-- 共通ヘッダー -->
+    <style name="header">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#5f4a18</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:background">#deb887</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <!-- 共通コンテンツ -->
+    <style name="contents">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">#fcf9f0</item>
+    </style>
+
+    <!-- header of DetailActivity -->
+    <style name="header_detail">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">#aaaaaa</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:layout_gravity">fill</item>
+    </style>
+
+    <!-- table header of DetailActivity -->
+    <style name="th_detail">
+        <item name="android:layout_width">0dip</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">#aaaaaa</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+
+
+    <!-- table data of DetailActivity -->
+    <style name="td_detail">
+        <item name="android:layout_width">0dip</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+
+    <!-- a horizonal line -->
+    <style name="hr">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">#000000</item>
+
+    </style>
+
+
+
+</resources>
