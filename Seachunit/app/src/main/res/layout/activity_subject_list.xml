@@ -28,35 +28,61 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#cc999999">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="点数"
-            android:id="@+id/button1"
-            android:layout_weight="1" />
+        <LinearLayout
+            style="@style/navbutton_layout"
+            android:id="@+id/lbutton1">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="点数登録"
-            android:id="@+id/button2"
-            android:layout_weight="1" />
+            <ImageView
+                style="@style/navbutton_image"
+                android:src="@android:drawable/ic_menu_info_details" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="シラバス"
-            android:id="@+id/button3"
-            android:layout_weight="1" />
+            <TextView
+                style="@style/navbutton_text"
+                android:text="詳細表示" />
+        </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="設定"
-            android:id="@+id/button4"
-            android:layout_weight="1" />
+        <LinearLayout
+            style="@style/navbutton_layout"
+            android:id="@+id/lbutton2">
+
+            <ImageView
+                style="@style/navbutton_image"
+                android:src="@android:drawable/ic_menu_edit" />
+
+            <TextView
+                style="@style/navbutton_text"
+                android:text="点数編集" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/navbutton_layout"
+            android:id="@+id/lbutton3">
+
+            <ImageView
+                style="@style/navbutton_image"
+                android:src="@android:drawable/ic_menu_gallery" />
+
+            <TextView
+                style="@style/navbutton_text"
+                android:text="シラバス" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/navbutton_layout"
+            android:id="@+id/lbutton4">
+
+            <ImageView
+                style="@style/navbutton_image"
+                android:src="@android:drawable/ic_menu_manage" />
+
+            <TextView
+                style="@style/navbutton_text"
+                android:text="設定" />
+        </LinearLayout>
+
 
     </LinearLayout>
 

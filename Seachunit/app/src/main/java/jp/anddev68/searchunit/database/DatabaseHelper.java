@@ -11,11 +11,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import jp.anddev68.searchunit.structure.School;
 import jp.anddev68.searchunit.structure.Subject;
 
 /**
+ * TODO:
+ * SQLをString.formatで書き直す作業
+ *
+ *
  * Created by hideki on 2014/12/10.
  */
 public class DatabaseHelper extends SQLiteOpenHelper{
@@ -41,17 +46,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 
     private Context _context;
-
-    /**
-     * 学校名を指定してIDを取得する
-     * @param db データベース
-     * @param name 学校名
-     * @return 失敗:-1 取得:そのID
-     */
-    public static int getSchoolId(SQLiteDatabase db,String name){
-        return -1;
-    }
-
 
 
 
@@ -110,7 +104,88 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     /**
+     * 仕様変更後
+     * ver3.00から追加
+     */
+
+
+    /**
+     * 学年,学科（String）をキーとして
+     * 一致する全ての教科コードを返す
+     *
+     * 非推奨メソッド
+     * 多分使うことはないでしょう
+     */
+    public static ArrayList<Integer> getAllSubjectId(SQLiteDatabase db,String grade,String depart){
+        ArrayList<Integer> subjects = new ArrayList<>();
+        String sql = "SELECT subject_id FROM subject WHERE "+
+                "depart= " + depart +" AND grade= " +  grade + ";";
+        Cursor cursor = tryRawQuery(db,sql);
+        if(cursor==null) return null;
+        while(cursor.moveToNext()){
+            int id = cursor.getInt(0);
+            subjects.add(id);
+        }
+        return subjects;
+
+    }
+
+    /**
+     * 学年,学科,学科名（String）をキーとして
+     * 教科コードを返す
+     *
+     */
+    public static int getSubjectId(SQLiteDatabase db,String subjectName,String grade,String depart,int defValue){
+        String sql = String.format(
+                "SELECT subject_id FROM subject WHERE "+
+                        "depart= '%s' AND grade='%s' AND subject_name='%s';",depart,grade,subjectName);
+
+        //String sql = "SELECT subject_id FROM subject WHERE "+
+               // "depart= '" + depart +"' AND grade= " +  grade + "subject_name="+ subjectName +";";
+        Cursor cursor = tryRawQuery(db,sql);
+        int id = defValue;
+        if(cursor==null) return defValue;
+        while(cursor.moveToNext()){
+            id = cursor.getInt(0);
+        }
+        return id;
+
+    }
+
+
+
+    /**
+     * 学年,学科をキーとして
+     * 一致する全ての教科名を返す
+     * @param db
+     * @param grade
+     * @param depart
+     * @return
+     */
+    public static ArrayList<String> getAllSubjectName(SQLiteDatabase db,String grade,String depart){
+        ArrayList<String> subjects = new ArrayList<>();
+        String sql = String.format(
+                "SELECT subject_name FROM subject WHERE "+
+                        " depart='%s' AND grade='%s';",depart,grade);
+
+        //String sql = "SELECT subject_name FROM subject WHERE "+
+                //"depart= " + depart +" AND grade= " +  grade + ";";
+        Cursor cursor = tryRawQuery(db,sql);
+        if(cursor==null) return null;
+        while(cursor.moveToNext()){
+            String name = cursor.getString(0);
+            subjects.add(name);
+        }
+        return subjects;
+
+    }
+
+
+
+
+    /**
      * 任意のタームの点数を取得する
+     * 変更：教科コードをキーとして点数を取得する
      */
     public static int getPointValue(SQLiteDatabase db,int subjectId,int termId,int defValue){
         String sql = String.format("SELECT value FROM point WHERE subject_id =%d AND term_id=%d",
@@ -124,6 +199,22 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         cursor.close();
         return id;
     }
+
+
+    /**
+     * 教科を追加
+     */
+    public static int insertSubject(SQLiteDatabase db,String subjectName,String depart,String grade){
+        String sql = String.format(
+                "INSERT INTO subject(depart,grade,subject_name)"+
+                        " VALUES('%s','%s','%s');",depart,grade,subjectName);
+        tryExecSql(db,sql);
+        return 0;
+    }
+
+
+
+
 
 
 
@@ -305,6 +396,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
            e.printStackTrace();
        }
     }
+
 
 
     boolean init;

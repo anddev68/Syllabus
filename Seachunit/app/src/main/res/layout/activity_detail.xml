@@ -13,7 +13,7 @@
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:text="教科名"
-            android:id="@+id/textView9"
+            android:id="@+id/subject"
             android:gravity="center"
             android:textSize="30dp" />
 
@@ -25,7 +25,7 @@
             <TextView
                 style="@style/td_detail"
                 android:text=""
-                android:id="@+id/textView" />
+                android:id="@+id/textView4" />
 
             <TextView
                 style="@style/td_detail"
@@ -50,17 +50,17 @@
             <TextView
                 style="@style/td_detail"
                 android:text="前期中間"
-                android:id="@+id/textView8" />
+                android:id="@+id/text0_0" />
 
             <TextView
                 style="@style/td_detail"
                 android:text="0"
-                android:id="@+id/textView10" />
+                android:id="@+id/text0_1" />
 
             <TextView
                 style="@style/td_detail"
                 android:text="0"
-                android:id="@+id/textView11" />
+                android:id="@+id/text0_2" />
         </LinearLayout>
 
 
@@ -172,7 +172,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="6"
-                android:id="@+id/textView13"
+                android:id="@+id/unit"
                 android:textSize="20sp" />
         </LinearLayout>
 

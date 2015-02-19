@@ -6,6 +6,9 @@ package jp.anddev68.searchunit.structure;
 public class Subject {
     public int subjectId;
     public String subjectName;
+    public String grade;
+    public String depart;
+    public String syllabusCode;
 
     public Subject(int id,String name){
         this.subjectId = id;

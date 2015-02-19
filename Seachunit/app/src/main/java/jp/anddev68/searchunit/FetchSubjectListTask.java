@@ -26,22 +26,22 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer>{
     Context _context;
     AbstractParser _parser;
     SQLiteDatabase _db;
-    int _departId;
-    int _gradeId;
+    String _depart;
+
 
     TaskEndListener _listener;
     public void setTaskEndListener(TaskEndListener l){ _listener = l; }
 
-    public FetchSubjectListTask(Context context,AbstractParser parser,SQLiteDatabase db,int departId,int gradeId){
+    public FetchSubjectListTask(Context context,AbstractParser parser,SQLiteDatabase db,String depart,String grade){
         _context = context;
         _parser = parser;
         _db = db;
-        _departId = departId;
-        _gradeId = gradeId;
+        _depart = depart;
+
         _parser.setOnParsedLineListener(new OnParsedLineListener() {
             @Override
-            public boolean onParsedLine(String subjectName,String url,int gradeId) {
-                return FetchSubjectListTask.this.onParsedLine(subjectName,url,gradeId);
+            public boolean onParsedLine(String subjectName,String url,int grade) {
+                return FetchSubjectListTask.this.onParsedLine(subjectName,url,""+grade);
             }
         });
 
@@ -73,15 +73,16 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer>{
     }
 
 
-    private boolean onParsedLine(String subjectName,String url,int gradeId){
+    private boolean onParsedLine(String subjectName,String url,String grade){
 
-        if(gradeId!=_gradeId) return true;
+        //if(gradeId!=_gradeId) return true;
 
         //  教科テーブルに追加
-        DatabaseHelper.insertSubject(_db,subjectName,_departId,_gradeId);
+        DatabaseHelper.insertSubject(_db,subjectName,_depart,grade);
+
         //  シラバステーブルにURLを追加
-        int subjectId = DatabaseHelper.getSubjectId(_db,_departId,_gradeId,-1);
-        DatabaseHelper.insertSyllabus(_db,subjectId,url);
+        //int subjectId = DatabaseHelper.getSubjectId(_db,depart,grade,-1);
+        //DatabaseHelper.insertSyllabus(_db,subjectId,url);
 
 
         return true;

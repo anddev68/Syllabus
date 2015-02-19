@@ -5,35 +5,21 @@
     android:layout_height="match_parent">
     <PreferenceCategory android:title="設定">
 
-        <!-- 動的に高専名を作成してください -->
         <ListPreference
-            android:key="school_name"
-            android:title="高専名"
-            android:summary="所属する高専名を選択してください"
-            android:dialogTitle="高専名を選択" />
-
-        <!-- 動的に学科を作成してください -->
-        <ListPreference
-            android:key="depart_name"
+            android:key="depart"
             android:title="学科"
+            android:entries="@array/depart_entry"
+            android:entryValues="@array/depart_entryValues"
             android:summary="所属する学科を選択してください"
             android:dialogTitle="学年を選択" />
 
-        <!-- 動的に学年を作成してください -->
         <ListPreference
-            android:key="grade_name"
+            android:key="grade"
+            android:entries="@array/grade_entry"
+            android:entryValues="@array/grade_entryValues"
             android:title="学年"
             android:summary="所属する学年を選択してください"
             android:dialogTitle="学年を選択" />
-
-
-
-        <!-- 2回目以降の起動時にこの画面を表示するかの設定 -->
-        <CheckBoxPreference
-            android:key="setting_display"
-            android:title="次回起動時に表示しない"
-            android:summary="次回以降この画面を表示しない場合はチェックを入れてください" />
-
 
 
     </PreferenceCategory>

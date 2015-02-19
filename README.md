@@ -1,10 +1,10 @@
 # Syllabus
 高専生向けシラバス閲覧アプリのソースを載せておきます
 
-#SyllabusHunterG
-シラバスハンター（汎用版）
-今のところ岐阜高専にしか対応してません
+# SerachUnit
+高専生向け単位管理アプリ、「単位を探せ！」
+開発中です。詳しい説明は後々追加していきます。
 
-#SyllabusToTSV
-シラバスのpdfをtsv化するRubyスクリプト
-岐阜高専にしか対応していません
+This software is released under the MIT License, see LICENSE.txt.
+
+

@@ -13,14 +13,57 @@
         <item>課題</item>
     </string-array>
 
-    <string-array name="gakka_array">
+    <!-- 学科(表示される値) -->
+    <string-array name="depart_entry">
+        <item>機械工学科</item>
+        <item>電気情報工学科(E)</item>
+        <item>電気情報工学科(J)</item>
+        <item>電子制御工学科</item>
+        <item>環境都市工学科</item>
+        <item>建築学科</item>
+        <item>一般(ALL)</item>
+    </string-array>
+
+    <!-- 学科別のシラバストップURL(entryValuesと対応) -->
+    <string-array name="url_array">
+        <item>http://www.gifu-nct.ac.jp/syllabus/BrowsingPage/M/Mindex.html</item>
+        <item>http://www.gifu-nct.ac.jp/syllabus/BrowsingPage/E/EindexEEcourse.html</item>
+        <item>http://www.gifu-nct.ac.jp/syllabus/BrowsingPage/E/EindexEJcourse.html</item>
+        <item>http://www.gifu-nct.ac.jp/syllabus/BrowsingPage/D/Dindex.html</item>
+        <item>http://www.gifu-nct.ac.jp/syllabus/BrowsingPage/C/Cindex.html</item>
+        <item>http://www.gifu-nct.ac.jp/syllabus/BrowsingPage/A/Aindex.html</item>
+        <item>http://www.gifu-nct.ac.jp/syllabus/BrowsingPage/G/Gindex.html</item>
+    </string-array>
+
+
+    <!-- 学科(設定される値) -->
+    <string-array name="depart_entryValues">
         <item>M</item>
         <item>EE</item>
         <item>EJ</item>
         <item>D</item>
         <item>C</item>
         <item>A</item>
+        <item>ALL</item>
     </string-array>
+
+    <!-- 学年 -->
+    <string-array name="grade_entry">
+        <item>1年</item>
+        <item>2年</item>
+        <item>3年</item>
+        <item>4年</item>
+        <item>5年</item>
+    </string-array>
+
+    <string-array name="grade_entryValues">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
 
 
 </resources>

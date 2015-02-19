@@ -53,11 +53,11 @@
         <item name="android:layout_weight">1</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">22sp</item>
-        <item name="android:layout_margin">10dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_margin">5dp</item>
     </style>
 
-    <!-- a horizonal line -->
+    <!-- 横線 -->
     <style name="hr">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">1dp</item>
@@ -65,6 +65,36 @@
 
     </style>
 
+    <!-- 画像ボタン用外枠 -->
+    <style name="navbutton_layout">
+        <item name="android:layout_width">0dip</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">#00000000</item>
+        <item name="android:clickable">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_marginLeft">2dp</item>
+        <item name="android:layout_marginRight">2dp</item>
+    </style>
+
+    <!-- 画像ボタン用画像 -->
+    <style name="navbutton_image">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">#00000000</item>
+    </style>
+
+    <!-- 画像ボタン用テキスト -->
+    <style name="navbutton_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:background">#00000000</item>
+    </style>
 
 
 </resources>

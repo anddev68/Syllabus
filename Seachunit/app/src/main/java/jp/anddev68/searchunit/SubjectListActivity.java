@@ -1,5 +1,6 @@
 package jp.anddev68.searchunit;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,34 +19,49 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import jp.anddev68.searchunit.database.DatabaseHelper;
 import jp.anddev68.searchunit.parser.AbstractParser;
+import jp.anddev68.searchunit.parser.GnctParser;
 import jp.anddev68.searchunit.structure.Subject;
 
 
-public class SubjectListActivity extends ActionBarActivity {
+public class SubjectListActivity extends Activity {
 
     private static final int MODE_POINT = 1;    //  点数表示モード
     private static final int MODE_REGISTER = 2;   //  点数登録モード
     private static final int MODE_SYLLABUS = 3;     //  シラバス閲覧モード
+    private static final int NON_SELECT_COLOR = Color.rgb(0x99,0x99,0x99);
+    private static final int SELECT_COLOR = Color.rgb(0x55,0x55,0x55);
     private int _mode;
 
-    SQLiteDatabase _db;
-    int _schoolId;
-    int _departId;
-    int _gradeId;
-    String _departName;
-    ArrayList<Subject> _subjectList;
+
+
+
+    private SQLiteDatabase _db;
+    private String _grade;
+    private String _depart;
+    private SharedPreferences _pref;
+
 
     TextView textView2;
-    Button button,button2,button3,button4;
+    //  Button button,button2,button3,button4;
+    ListView listView;
+    LinearLayout[] buttonLayouts;   //  擬似ボタン
+
+
+    //  教科表
+    ArrayList<String> allSubjectName;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +73,20 @@ public class SubjectListActivity extends ActionBarActivity {
     @Override
     protected void onResume(){
         super.onResume();
+
+        //  設定画面を開くかどうかのチェックを行う
+        if(configCheck()){
+            openConfigActivity();
+            return;
+        }
+
+        //  設定値を取得
+        _pref = PreferenceManager.getDefaultSharedPreferences(this);
+        DatabaseHelper helper = DatabaseHelper.getInstance(getApplicationContext());
+        _db = helper.getWritableDatabase();
+        _grade = _pref.getString("grade","");
+        _depart = _pref.getString("depart","");
+
         setupWidget();
     }
 
@@ -86,88 +116,71 @@ public class SubjectListActivity extends ActionBarActivity {
     }
 
     /**
+     * 設定のチェック
+     * 次回表示しない設定（未実装）もしくは学科と学年データが設定されていないかどうかチェック
+     *
+     * @return 条件を満たす
+     **/
+    private boolean configCheck(){
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String grade = pref.getString("grade",null);
+        String depart = pref.getString("depart",null);
+        if(grade==null || depart==null){
+            return true;
+        }
+        return false;
+    }
+
+
+
+    /**
      * ウィジェットの配置を行う
      */
     private void setupWidget(){
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         DatabaseHelper helper = DatabaseHelper.getInstance(getApplicationContext());
-        _db = helper.getWritableDatabase();
+        SQLiteDatabase db = helper.getWritableDatabase();
+        String grade = pref.getString("grade","");
+        String depart = pref.getString("depart","");
 
         //  ウィジェットの取得
         textView2 = (TextView) findViewById(R.id.textView2);
-        button = (Button) findViewById(R.id.button1);
-        button2 = (Button) findViewById(R.id.button2);
-        button3 = (Button) findViewById(R.id.button3);
-        button4 = (Button) findViewById(R.id.button4);
+        listView = (ListView) findViewById(R.id.subject_list);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        buttonLayouts = new LinearLayout[4];
+        buttonLayouts[0] = (LinearLayout) findViewById(R.id.lbutton1);
+        buttonLayouts[1] = (LinearLayout) findViewById(R.id.lbutton2);
+        buttonLayouts[2] = (LinearLayout) findViewById(R.id.lbutton3);
+        buttonLayouts[3] = (LinearLayout) findViewById(R.id.lbutton4);
+        LinearLayout.OnClickListener listener = new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                _mode = MODE_POINT;
-                setModeDisplay();
+                SubjectListActivity.this.onClickLButton(v);
             }
-        });
+        };
+        for(int i=0; i<buttonLayouts.length; i++) buttonLayouts[i].setOnClickListener(listener);
 
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _mode = MODE_REGISTER;
-                setModeDisplay();
-            }
-        });
 
-        button3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _mode = MODE_SYLLABUS;
-                setModeDisplay();
-            }
-        });
-
-        button4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openConfigActivity();   //  設定画面を開く
-            }
-        });
-
-        //  Prefから設定された学科IDと学年IDを取得
-        _departId = pref.getInt("depart_id",-1);   //  学科ID
-        _gradeId = pref.getInt("grade_id",-1); //  学年ID
-        _schoolId = pref.getInt("school_id",-1);
-
-        //  エラーの場合はここで処理を終了
-        if( _schoolId ==-1 || _gradeId == -1 || _departId == -1){
-            Toast.makeText(this,"設定画面を開いてください",Toast.LENGTH_SHORT).show();
-            _db.close();
-            return;
-        }
-
-        //  教科一覧と学科名等のセットアップ
-        _departName = DatabaseHelper.getDepartName(_db,_departId,"N/A");
-        _subjectList = DatabaseHelper.getSubjectList(_db,_departId,_gradeId);
-
-        //  システムメッセージに現在の設定を表示
-        TextView tv = (TextView) findViewById(R.id.system_mes);
-        tv.setText("現在の設定："+_departName+" "+_gradeId+"年");
-
-        //  初回のみ取得する
-        if(_subjectList.isEmpty()){
-            Log.i("SubjectListAct","subjectList is Emnpty.");
-
-            //  現在の設定でフェッチを行う
-            firstFetch();
-            //  ダウンロードタスク終了後、自動でリストビューにセット
-            return;
-        }
-
-        //  2回目以降はリストビューのセットだけを行う
-        onEndTask();
-
-        //  初期モードをセット
+        //  初期モードをセットする
         _mode = MODE_POINT; //  点数表示モード
         setModeDisplay();
+
+        //  教科表を取得してくる
+        allSubjectName = DatabaseHelper.getAllSubjectName(db, grade, depart);
+
+        //  データがない場合はネット上に取りに行く
+        if(allSubjectName.isEmpty()){
+            Log.i("SubjectListAct","subjectList is Empty.");
+            firstFetch();
+        }else{
+            //  データが存在する場合はリストビューにセット
+            //  =ダウンロードが終わったことにする
+            onEndTask();
+        }
+
+
     }
+
 
 
     /**
@@ -176,12 +189,11 @@ public class SubjectListActivity extends ActionBarActivity {
      */
     private void onEndTask(){
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        int id_department = pref.getInt("depart_id",-1);   //  学科ID
-        int id_grade = pref.getInt("grade_id",-1); //  学年ID
-        _subjectList = DatabaseHelper.getSubjectList(_db,id_department,id_grade);
-        ListView lv = (ListView) findViewById(R.id.subject_list);
-        lv.setAdapter(new ArrayAdapter<Subject>(this,android.R.layout.simple_list_item_1,_subjectList));
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        if(allSubjectName.isEmpty()){
+            allSubjectName = DatabaseHelper.getAllSubjectName(_db, _grade, _depart);
+        }
+        listView.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,allSubjectName));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SubjectListActivity.this.onListView1ItemClick(parent,view,position,id);
@@ -197,19 +209,25 @@ public class SubjectListActivity extends ActionBarActivity {
      */
     private void onListView1ItemClick(AdapterView<?> parent,View view,int position,long id){
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        Subject subject = _subjectList.get((int)id);
-        String url = DatabaseHelper.getSyllabusUrl(_db,subject.subjectId,"N/A");
-        Log.i("SubjectListActivity","Pressed "+(String)subject.subjectName+" ID:"+subject.subjectId);
+
+        String subjectName = (String)parent.getItemAtPosition(position);
+        String depart = pref.getString("depart",null);
+        String grade = pref.getString("grade",null);
+        DatabaseHelper helper = DatabaseHelper.getInstance(getApplicationContext());
+        SQLiteDatabase db = helper.getWritableDatabase();
+        int subjectId = DatabaseHelper.getSubjectId(db,subjectName,grade,depart,-1);
 
         switch(_mode){
             case MODE_SYLLABUS:
-                openPdf(url);   //  シラバスを開く
+                //openPdf(url);   //  シラバスを開く
+                Toast.makeText(this,"No Implemented",Toast.LENGTH_SHORT).show();
                 break;
             case MODE_POINT:
-                openDetailActivity(subject);
+                openDetailActivity(subjectId,subjectName);
                 break;
             case MODE_REGISTER:
-                openRegistActivity(subject,url);
+                Toast.makeText(this,"No Implemented",Toast.LENGTH_SHORT).show();
+                //openRegistActivity(subject,url);
                 break;
 
 
@@ -221,17 +239,56 @@ public class SubjectListActivity extends ActionBarActivity {
 
 
     /**
+     * ボタンが押された時
+     * モード切り替えor設定メニューの表示
+     */
+    private void onClickLButton(View v){
+        switch(v.getId()){
+            case R.id.lbutton1:
+                _mode = MODE_POINT;
+                setModeDisplay();
+                break;
+            case R.id.lbutton2:
+                _mode = MODE_REGISTER;
+                setModeDisplay();
+                break;
+            case R.id.lbutton3:
+                _mode = MODE_SYLLABUS;
+                setModeDisplay();
+                break;
+            case R.id.lbutton4:
+                openConfigActivity();
+                break;
+        }
+    }
+
+
+
+
+    /**
      * 初回のみ教科リストを取得する
      * @use FetchSubjectListTask
      */
     private void firstFetch(){
-        String top_url = DatabaseHelper.getDepartUrl(_db,_departId,null);
-        AbstractParser parser = AbstractParser.create(_schoolId,top_url);
-        if(parser==null){
-            Toast.makeText(this,"不正な引数",Toast.LENGTH_SHORT).show();
-            return;
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        DatabaseHelper helper = DatabaseHelper.getInstance(getApplicationContext());
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        String depart = pref.getString("depart","");
+        String grade = pref.getString("grade","");
+        String[] urlArray = getResources().getStringArray(R.array.url_array);   //  学科URL表
+        String[] departArray = getResources().getStringArray(R.array.depart_entryValues);   //学科表
+        String url = "";
+        for(int i=0; i<departArray.length; i++){
+            if(depart.equals(departArray[i])){
+                //  一致した番号がその学科のURL
+                url = urlArray[i];  //  選択されている学科と表で一致した番号を取得
+            }
         }
-        FetchSubjectListTask task = new FetchSubjectListTask(this,parser,_db,_departId,_gradeId);
+        Log.d("SubjectListAct","Start DL From:"+url);
+
+        AbstractParser parser = new GnctParser(url);
+        FetchSubjectListTask task = new FetchSubjectListTask(this,parser,db,depart,grade);
         task.setTaskEndListener(new FetchSubjectListTask.TaskEndListener() {
             @Override
             public void onEndTask() {
@@ -244,20 +301,33 @@ public class SubjectListActivity extends ActionBarActivity {
 
     /**
      * モードに応じて表示する色を変える
+     * あとクリックラブルを外す
      */
     private void setModeDisplay(){
+        for(int i=0; i<buttonLayouts.length; i++){
+            buttonLayouts[i].setBackgroundColor(NON_SELECT_COLOR);
+            buttonLayouts[i].setClickable(true);
+        }
+
+
         switch(_mode) {
             case MODE_POINT:
                 textView2.setText("教科一覧[点数表示]");
                 textView2.setBackgroundColor(Color.rgb(200,0,0));
+                buttonLayouts[0].setClickable(false);
+                buttonLayouts[0].setBackgroundColor(SELECT_COLOR);
                 break;
             case MODE_REGISTER:
                 textView2.setText("教科一覧[点数登録]");
                 textView2.setBackgroundColor(Color.rgb(0,200,0));
+                buttonLayouts[1].setBackgroundColor(SELECT_COLOR);
+                buttonLayouts[1].setClickable(false);
                 break;
             case MODE_SYLLABUS:
                 textView2.setText("教科一覧[シラバス]");
                 textView2.setBackgroundColor(Color.rgb(0,0,200));
+                buttonLayouts[2].setBackgroundColor(SELECT_COLOR);
+                buttonLayouts[2].setClickable(false);
                 break;
         }
     }
@@ -292,13 +362,14 @@ public class SubjectListActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
+
     /**
      * 点数詳細画面を開く
      */
-    private void openDetailActivity(Subject subject){
+    private void openDetailActivity(int subjectId,String subjectName){
         Intent intent = new Intent(this,DetailActivity.class);
-        intent.putExtra("subject_id",subject.subjectId);
-        intent.putExtra("subject_name",subject.subjectName);
+        intent.putExtra("subject_id",subjectId);
+        intent.putExtra("subject_name",subjectName);
         startActivity(intent);
     }
 
