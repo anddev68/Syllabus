@@ -11,6 +11,6 @@ public interface OnParsedLineListener {
      * @param syllabusUrl
      * @return false 次の行へ行くのをやめる
      */
-    public boolean onParsedLine(String subjectName,String syllabusUrl,int gradeId);
+    public boolean onParsedLine(String subjectName,String syllabusUrl,String syllabusCode,int gradeId);
 
 }

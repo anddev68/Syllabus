@@ -53,8 +53,9 @@ public class GnctParser extends AbstractParser{
                 Matcher m = pattern.matcher(line);
                 while(m.find()){
                     String abs_path = _top_url.substring(0,_top_url.lastIndexOf('/'))+"/";
-                    String href = abs_path + m.group(1).replaceAll("\\s", "");
-                    String text = m.group(2).replaceAll("\\s", "");
+                    String code = m.group(1).replaceAll("\\s", "").replace(".pdf","");  //  xxxxxx.pdfのxxxx部分をコードとする
+                    String href = abs_path + m.group(1).replaceAll("\\s", "");  //  URLは絶対パス
+                    String text = m.group(2).replaceAll("\\s", "");  // 科目名
 
                     //  一般科の特殊なものを処理
                     for(String str:cs2){
@@ -65,7 +66,7 @@ public class GnctParser extends AbstractParser{
 
                     //Log.i("GnctParser",
                     //    String.format("grade=%d href=%s text=%s",grade,href,text));
-                    if(! _listener.onParsedLine(text,href,grade) ){
+                    if(! _listener.onParsedLine(text,href,code,grade) ){
                         //  終了処理を加える
                     }
                 }

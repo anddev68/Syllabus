@@ -2,20 +2,27 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SubjectListActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/repeat_bg100_01"
+    android:id="@+id/root">
 
 
     <TextView
-        style="@style/header"
         android:text="教科一覧"
         android:id="@+id/textView2"
-        android:background="#cc0000" />
+        android:background="@drawable/btn039_01"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/header"
+        android:gravity="center" />
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/subject_list"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:dividerHeight="1sp"
+        android:divider="#999999" />
 
     <TextView
         android:layout_width="match_parent"

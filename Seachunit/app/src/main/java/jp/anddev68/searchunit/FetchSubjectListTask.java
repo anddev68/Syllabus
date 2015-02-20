@@ -40,8 +40,8 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer>{
 
         _parser.setOnParsedLineListener(new OnParsedLineListener() {
             @Override
-            public boolean onParsedLine(String subjectName,String url,int grade) {
-                return FetchSubjectListTask.this.onParsedLine(subjectName,url,""+grade);
+            public boolean onParsedLine(String subjectName,String url,String code,int grade) {
+                return FetchSubjectListTask.this.onParsedLine(subjectName,url,code,""+grade);
             }
         });
 
@@ -73,7 +73,15 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer>{
     }
 
 
-    private boolean onParsedLine(String subjectName,String url,String grade){
+    /**
+     * 解析した結果がここに入ります
+     * @param subjectName 教科名
+     * @param url シラバスへのURL
+     * @param code シラバスコード
+     * @param grade 学年
+     * @return
+     */
+    private boolean onParsedLine(String subjectName,String url,String code,String grade){
 
         //if(gradeId!=_gradeId) return true;
 
@@ -81,8 +89,8 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer>{
         DatabaseHelper.insertSubject(_db,subjectName,_depart,grade);
 
         //  シラバステーブルにURLを追加
-        //int subjectId = DatabaseHelper.getSubjectId(_db,depart,grade,-1);
-        //DatabaseHelper.insertSyllabus(_db,subjectId,url);
+        int subjectId = DatabaseHelper.getSubjectId(_db,subjectName,grade,_depart,-1);
+        DatabaseHelper.insertSyllabus(_db,code,subjectId);
 
 
         return true;

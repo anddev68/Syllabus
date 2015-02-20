@@ -182,7 +182,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 
 
-
     /**
      * 任意のタームの点数を取得する
      * 変更：教科コードをキーとして点数を取得する
@@ -213,7 +212,33 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
 
+    /**
+     * シラバスを追加
+     */
+    public static int insertSyllabus(SQLiteDatabase db,String syllabusCode,int subjectId){
+        String sql = String.format(
+                "INSERT INTO syllabus(syllabus_code,subject_id)"+
+                        " VALUES('%s',%d);",syllabusCode,subjectId);
+        tryExecSql(db,sql);
+        return 0;
+    }
 
+
+    /**
+     * シラバスコードを取得
+     */
+    public static String getSyllabusCode(SQLiteDatabase db,int subjectId,String defValue){
+        String sql = String.format("SELECT syllabus_code FROM syllabus WHERE subject_id =%d",
+                subjectId);
+        Cursor cursor = tryRawQuery(db,sql);
+        if(cursor==null) return defValue;
+        String id = defValue;
+        while(cursor.moveToNext()){
+            id = cursor.getString(0);
+        }
+        cursor.close();
+        return id;
+    }
 
 
 

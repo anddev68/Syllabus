@@ -21,6 +21,11 @@
             android:summary="所属する学年を選択してください"
             android:dialogTitle="学年を選択" />
 
+        <CheckBoxPreference
+            android:key="plusG"
+            android:title="一般科plusモード"
+            android:summary="選択した科＋一般科で表示します"
+            android:checked="false" />
 
     </PreferenceCategory>
 </PreferenceScreen>
