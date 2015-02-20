@@ -416,6 +416,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
     private static void tryExecSql(SQLiteDatabase db,String sql){
        try{
+           Log.i("DBHelper","exec:"+sql);
            db.execSQL(sql);
        }catch(Exception e){
            e.printStackTrace();

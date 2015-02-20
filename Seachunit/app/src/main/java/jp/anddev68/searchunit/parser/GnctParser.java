@@ -23,16 +23,15 @@ import jp.anddev68.searchunit.structure.Subject;
  */
 public class GnctParser extends AbstractParser{
 
-    String _top_url;
 
-    public GnctParser(String url){
-        _top_url = url;
+    public GnctParser(){
+
     }
 
     @Override
-    public void start(){
+    public void start(String top_url){
         try {
-            URL url = new URL(_top_url);
+            URL url = new URL(top_url);
             InputStream is = url.openStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(is,"sjis"));
             String line =  null;
@@ -40,7 +39,7 @@ public class GnctParser extends AbstractParser{
             String[] cs2 = {"地理(","英語C(","政治経済(","英語A("};
             int grade = 0;
 
-            Log.i("GnctParser","URL:"+_top_url);
+            Log.i("GnctParser","URL:"+top_url);
 
             while((line=br.readLine())!=null) {
                 //  学年別に読む処理
@@ -52,7 +51,7 @@ public class GnctParser extends AbstractParser{
                 Pattern pattern = Pattern.compile("<a.*?href=\"(.*?)\".*?>(.*?)</a>");
                 Matcher m = pattern.matcher(line);
                 while(m.find()){
-                    String abs_path = _top_url.substring(0,_top_url.lastIndexOf('/'))+"/";
+                    String abs_path = top_url.substring(0,top_url.lastIndexOf('/'))+"/";
                     String code = m.group(1).replaceAll("\\s", "").replace(".pdf","");  //  xxxxxx.pdfのxxxx部分をコードとする
                     String href = abs_path + m.group(1).replaceAll("\\s", "");  //  URLは絶対パス
                     String text = m.group(2).replaceAll("\\s", "");  // 科目名

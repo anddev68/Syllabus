@@ -146,8 +146,6 @@ public class SubjectListActivity extends Activity {
      */
     private void setupWidget(){
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        DatabaseHelper helper = DatabaseHelper.getInstance(getApplicationContext());
-        SQLiteDatabase db = helper.getWritableDatabase();
         String grade = pref.getString("grade","");
         String depart = pref.getString("depart","");
 
@@ -186,22 +184,37 @@ public class SubjectListActivity extends Activity {
         _mode = MODE_POINT; //  点数表示モード
         setModeDisplay();
 
-        //  教科表を取得してくる
-        allSubjectName = DatabaseHelper.getAllSubjectName(db, grade, depart);
-        if(allSubjectName.isEmpty()) {
-            firstFetch(_depart);
-        }else{
+        //  データを取得する
+        AbstractParser parser = new GnctParser();
+        FetchSubjectListTask task = new FetchSubjectListTask(this,parser,_db,_grade);
+        allSubjectName = DatabaseHelper.getAllSubjectName(_db, _grade, _depart);
+        gSubjectName = DatabaseHelper.getAllSubjectName(_db, _grade, "ALL");
+
+        Log.d("データ数","ALL:"+allSubjectName.size());
+        Log.d("データ数","G:"+gSubjectName.size());
+
+        //  存在しないデータについてはネットからダウンロードを行う
+        if(allSubjectName.isEmpty()) task.addDownloadSrc(getTopUrl(_depart,null),_depart);
+        if(_plusGMode && gSubjectName.isEmpty() ) task.addDownloadSrc(getTopUrl("ALL",null),"ALL");
+
+
+
+        //  タスクの数が0以下ならデータを追加して終了
+        if ( task.getSrcCount() <= 0){
+            adapter.addAll(allSubjectName);
+            if(_plusGMode && !_depart.equals("ALL")) adapter.addAll(gSubjectName);
+            return;
         }
 
-        //  一般科の取得
-        if(_plusGMode) {
-            gSubjectName = DatabaseHelper.getAllSubjectName(db, grade, "ALL");
-            if(gSubjectName.isEmpty()) firstFetch("ALL");
-
-        }
-
-        onEndTask();
-
+        //  タスクを実行する
+        Log.d("","タスク実行" + task.getSrcCount());
+        task.setTaskEndListener(new FetchSubjectListTask.TaskEndListener() {
+            @Override
+            public void onEndTask() {
+                SubjectListActivity.this.onEndTask();
+            }
+        });
+        task.execute("");
 
     }
 
@@ -212,9 +225,17 @@ public class SubjectListActivity extends Activity {
      * アダプターにセットする
      */
     private void onEndTask(){
-        adapter.clear();
-        if(!allSubjectName.isEmpty()) adapter.addAll(allSubjectName);
-        if(_plusGMode && !gSubjectName.isEmpty()) adapter.addAll(gSubjectName);
+
+       // synchronized (_db) {
+            Log.d("", "+++onEndTask()");
+            adapter.clear();
+            allSubjectName = DatabaseHelper.getAllSubjectName(_db, _grade, _depart);
+            gSubjectName = DatabaseHelper.getAllSubjectName(_db, _grade, "ALL");
+            if (!allSubjectName.isEmpty()) adapter.addAll(allSubjectName);
+            if (_plusGMode && !gSubjectName.isEmpty() && !_depart.equals("ALL"))
+                adapter.addAll(gSubjectName);
+        //}
+
     }
 
     /**
@@ -229,21 +250,18 @@ public class SubjectListActivity extends Activity {
         String subjectName = (String)parent.getItemAtPosition(position);
         String depart = pref.getString("depart",null);
         String grade = pref.getString("grade",null);
-        DatabaseHelper helper = DatabaseHelper.getInstance(getApplicationContext());
-        SQLiteDatabase db = helper.getWritableDatabase();
-        int subjectId = DatabaseHelper.getSubjectId(db,subjectName,grade,depart,-1);
+        int subjectId = DatabaseHelper.getSubjectId(_db,subjectName,grade,depart,-1);
 
-        if(subjectId==-1&&_plusGMode) subjectId = DatabaseHelper.getSubjectId(db,subjectName,grade,"ALL",-1); //一般化モードでオープン
+        //  専門科に該当教科がない場合については一般科として扱う
+        if(subjectId==-1&&_plusGMode){
+            subjectId = DatabaseHelper.getSubjectId(_db,subjectName,grade,"ALL",-1);
+            depart = "ALL";
+        }
 
         switch(_mode){
             case MODE_SYLLABUS:
                 String url = getTopUrl(depart,null);
                 String code = DatabaseHelper.getSyllabusCode(_db,subjectId,null);
-                //  一般化なら一般化に変更
-                if(code==null){
-                    url = getTopUrl("ALL",null);
-                    code = DatabaseHelper.getSyllabusCode(_db,subjectId,null);
-                }
 
                 String abs_path = url.substring(0,url.lastIndexOf('/'))+"/";    //  URLを絶対パスに変換
                 abs_path = abs_path+code+".pdf";
@@ -312,8 +330,13 @@ public class SubjectListActivity extends Activity {
         }
         Log.d("SubjectListAct","Start DL From:"+url);
 
-        AbstractParser parser = new GnctParser(url);
-        FetchSubjectListTask task = new FetchSubjectListTask(this,parser,db,depart,_grade);
+        //  解析用のパーサーを作成
+        AbstractParser parser = new GnctParser();
+        FetchSubjectListTask task = new FetchSubjectListTask(this,parser,db,_grade);
+
+        //  解析するURLを追加する
+
+
         task.setTaskEndListener(new FetchSubjectListTask.TaskEndListener() {
             @Override
             public void onEndTask() {
