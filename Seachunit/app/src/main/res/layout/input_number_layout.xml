@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <Button
+            style="@style/numbutton"
+            android:text="7"
+            android:id="@+id/seven" />
+
+        <Button
+            style="@style/numbutton"
+            android:text="8"
+            android:id="@+id/eight" />
+
+        <Button
+            style="@style/numbutton"
+            android:text="9"
+            android:id="@+id/nine" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <Button
+            style="@style/numbutton"
+            android:text="4"
+            android:id="@+id/four" />
+
+        <Button
+            style="@style/numbutton"
+            android:text="5"
+            android:id="@+id/five" />
+
+        <Button
+            style="@style/numbutton"
+            android:text="6"
+            android:id="@+id/six" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <Button
+            style="@style/numbutton"
+            android:text="1"
+            android:id="@+id/one" />
+
+        <Button
+            style="@style/numbutton"
+            android:text="2"
+            android:id="@+id/two" />
+
+        <Button
+            style="@style/numbutton"
+            android:text="3"
+            android:id="@+id/three" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <Button
+            style="@style/numbutton"
+            android:text="0"
+            android:id="@+id/zero" />
+
+        <Button
+            style="@style/numbutton"
+            android:text="del"
+            android:onClick="onClickDelete"
+            android:id="@+id/del" />
+
+        <Button
+            style="@style/numbutton"
+            android:onClick="onClickEnter"
+            android:text="ent"
+            android:id="@+id/enter" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

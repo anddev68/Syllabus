@@ -1,6 +1,7 @@
 package jp.anddev68.searchunit;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,7 +32,7 @@ import jp.anddev68.searchunit.database.DatabaseHelper;
  *
  * Created by hideki on 2014/12/11.
  */
-public class DetailActivity extends Activity{
+public class DetailActivity extends Activity implements View.OnClickListener{
 
     String subjectName;
     int subjectId;
@@ -50,6 +51,14 @@ public class DetailActivity extends Activity{
         subjectId = getIntent().getIntExtra("subject_id",-1);
 
         setContentView(R.layout.activity_detail);
+
+        setupWidget();
+
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
 
         setupWidget();
     }
@@ -95,18 +104,45 @@ public class DetailActivity extends Activity{
         SQLiteDatabase db = helper.getWritableDatabase();
 
         for(int i=0; i<textViews.length; i++){
+            textViews[i].setOnClickListener(this);
+
             //  タームIDはtextViewの添字と一緒
             //  0=中間点数,1=中間max・・・
-            DatabaseHelper.getPointValue(db,subjectId,i,-1);
+            int point = DatabaseHelper.getPointValue(db,subjectId,i,-1);
+            if( point!=-1) textViews[i].setText(""+point);
+
         }
 
     }
 
 
-    private synchronized void download(String in,String out) {
-        FetchPdfTask task = new FetchPdfTask();
-        task.execute(in,out);
+
+
+
+    /**
+     * タームIDと科目名,教科IDを渡して開く
+     * @param termId
+     */
+    private void openRegisterAcitivty(int termId){
+        Intent intent = new Intent(this,RegistActivity.class);
+        intent.putExtra("subject_id",subjectId);
+        intent.putExtra("subject_name",subjectName);
+        intent.putExtra("term_id",termId);
+        startActivity(intent);
+
     }
+
+
+    @Override
+    public void onClick(View v) {
+        for(int i=0; i<textViews.length; i++){
+            if( textViews[i].getId() == v.getId() ){
+                openRegisterAcitivty(i);
+                return;
+            }
+        }
+    }
+
 
 
 

@@ -54,6 +54,7 @@
         <item name="android:gravity">center</item>
         <item name="android:textSize">18sp</item>
         <item name="android:layout_margin">5dp</item>
+        <item name="android:clickable">true</item>
     </style>
 
     <!-- 横線 -->
@@ -95,5 +96,21 @@
         <item name="android:background">#00000000</item>
     </style>
 
+
+
+
+
+    <!-- 数値ボタン -->
+    <style name="numbutton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:background">@drawable/numbutton_bg</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">40dp</item>
+        <item name="android:onClick">onClickNumber</item>
+        <item name="android:layout_margin">2dp</item>
+    </style>
 
 </resources>

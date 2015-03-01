@@ -1,12 +1,15 @@
 package jp.anddev68.searchunit;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -23,12 +26,18 @@ import jp.anddev68.searchunit.database.DatabaseHelper;
  */
 public class RegistActivity extends Activity{
 
-    RadioGroup radioGroup;
-    TextView textView,textView2;
-    Button button,button2;
-    Button button3;
     String subjectName;
     int subjectId;
+    int termId;
+
+
+    TextView subjectNameView;
+    TextView termView;
+    TextView numberView;
+
+    String[] termArray;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,75 +45,112 @@ public class RegistActivity extends Activity{
         setContentView(R.layout.activity_regist);
 
         /**
-         *
+         *  値を取得しておく
          */
         subjectId = getIntent().getIntExtra("subject_id",-1);
         subjectName = getIntent().getStringExtra("subject_name");
+        termId = getIntent().getIntExtra("term_id",-1);
+
+
+        /**
+         * 楽器表の作成
+         */
+        termArray = getResources().getStringArray(R.array.term_array);
+
 
         setupWidget();
     }
 
     private void setupWidget(){
-        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-        textView = (TextView) findViewById(R.id.textView4);     //  数値
-        textView2 = (TextView) findViewById(R.id.textView5);    //  教科名
-        textView2.setText(subjectName);
+        subjectNameView = (TextView) findViewById(R.id.textView5);
+        termView = (TextView) findViewById(R.id.textView);
+        numberView = (TextView) findViewById(R.id.textView8);
 
-        button = (Button) findViewById(R.id.button15); //delete
-        button2 = (Button) findViewById(R.id.button16); //enter
+        //  初期値を設定
+        if(subjectName!=null) subjectNameView.setText(subjectName);
+        if(termId!=-1) termView.setText(termArray[termId]);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                textView.setText("0");
-            }
-        });
-
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickEnter();
-            }
-        });
     }
 
     /**
      * エンターキーが押されたときの処理
      */
-    private void onClickEnter(){
+    public void onClickEnter(View v){
         DatabaseHelper helper = DatabaseHelper.getInstance(this);
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        int index = 1;
-        switch( radioGroup.getCheckedRadioButtonId() ){
-            case R.id.radioButton2: index = 2; break;
-            case R.id.radioButton3: index = 3; break;
-            case R.id.radioButton4: index = 4; break;
-            case R.id.radioButton5: index = 5; break;
-        }
+        int index = indexOf(termView.getText().toString());   //  termid
+        int value = Integer.parseInt(numberView.getText().toString());  //  value
 
-        int value = Integer.parseInt(textView.getText().toString());
-        DatabaseHelper.insertPoint(db,subjectId,index,value);
+        //  値を新規登録か、上書きかの決定をデータがあるかどうかで判別する。
+        int exist_flag =  DatabaseHelper.getPointValue(db,subjectId,index,-1);
+        if(exist_flag==-1) DatabaseHelper.insertPoint(db,subjectId,index,value); // new
+        else DatabaseHelper.updatePointValue(db,subjectId,index,value); //  override
+
+
+        //  TODO
+        //  新規データ出ない場合はupdateメソッドに変える。
 
         finish();
         Toast.makeText(this,"登録完了しました",Toast.LENGTH_SHORT).show();
+
     }
+
 
     /**
      * 数値ボタンが押されたときの処理
      */
-    public void onClick(View v){
+    public void onClickNumber(View v){
         Button button = (Button) v;
         String str = (String)button.getText();
-        Log.i("TextView",textView.getText().toString());
-        if( textView.getText().toString().equals("0")) textView.setText("");
-        textView.setText( textView.getText()+str);
+        Log.i("TextView",numberView.getText().toString());
+        if( numberView.getText().toString().equals("0")) numberView.setText("");
+        numberView.setText( numberView.getText()+str);
 
+    }
+
+
+    public void onClickDelete(View v){
+        numberView.setText( numberView.getText().subSequence(0,numberView.getText().length()-1) );
+    }
+
+
+    /**
+     * 選択...が押された場合
+     * 擬似ドロップダウンを開く
+     */
+    public void onClickSelectLabel(View v){
+        final ListView listView = new ListView(this);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,termArray);
+        listView.setAdapter(adapter);
+
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+            .setTitle("Select Term...")
+            .setView(listView)
+            .setNegativeButton("CANCEL",null)
+            .create();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                termView.setText(((TextView)view).getText());
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
 
 
     }
 
 
+
+    private int indexOf(String str){
+        for(int i=0; i<termArray.length; i++){
+            if(termArray[i].equals(str)) return i;
+        }
+        return -1;
+    }
 
 
 }

@@ -2,6 +2,7 @@ package jp.anddev68.searchunit;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,8 +15,17 @@ import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import jp.anddev68.searchunit.database.DatabaseHelper;
@@ -31,6 +41,11 @@ public class PrefActivity extends PreferenceActivity{
     ListPreference _box_depart;
     ListPreference _box_grade;
 
+    Preference _deletePointButton;
+    Preference _deleteSubjectButton;
+
+    Preference _license;
+
     private Button _button;
 
     @Override
@@ -39,14 +54,6 @@ public class PrefActivity extends PreferenceActivity{
 
         this.setContentView(R.layout.pref_activity);
         this.addPreferencesFromResource(R.xml.pref);
-
-        //  二回目以降は開かないなら開かない
-        /*
-        boolean non_display = _sharedPref.getBoolean("setting_display",false);
-        if(non_display){
-            Intent intent = new Intent(this,SubjectListActivity.class);
-            this.startActivity(intent);
-        }*/
 
 
         setupWidgets();
@@ -73,7 +80,16 @@ public class PrefActivity extends PreferenceActivity{
                 return true;
             }
         });
+        _deletePointButton = this.findPreference("dlPoint");
+        _deleteSubjectButton = this.findPreference("dlSubject");
 
+        _deleteSubjectButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                onClickDelSubjectTable();
+                return false;
+            }
+        });
 
         _button = (Button) this.findViewById(R.id.button);
         _button.setOnClickListener(new View.OnClickListener() {
@@ -84,6 +100,15 @@ public class PrefActivity extends PreferenceActivity{
         });
 
 
+        _license = this.findPreference("osp");
+        _license.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                //  ライセンス条文の表示
+                onClickLicense();
+                return true;
+            }
+        });
 
         //  サマリーを変更
         setSummary();
@@ -146,6 +171,63 @@ public class PrefActivity extends PreferenceActivity{
             _box_grade.setSummary(grade);
     }
 
+
+    /**
+     * ライセンスが押された時
+     */
+    private void onClickLicense(){
+        StringBuilder sb = new StringBuilder();
+        String line;
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(getResources().getAssets().open("license")));
+            while((line=br.readLine())!=null){
+                sb.append(line);
+                sb.append("\n");
+            }
+            br.close();
+
+            ScrollView scrollView = new ScrollView(this);
+            TextView textView = new TextView(this);
+            textView.setText(sb.toString());
+            scrollView.addView(textView);
+
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("License")
+                    .setView(scrollView).create();
+            dialog.show();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+
+    /**
+     * 教科テーブルの全削除
+     */
+    private void onClickDelSubjectTable(){
+        new AlertDialog.Builder(this)
+                .setTitle("確認")
+                .setMessage("消去します。よろしいですか？")
+                .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteSubjectTable();
+                        Toast.makeText(PrefActivity.this,"消去成功！",Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("CANCEL",null)
+                .show();
+    }
+    private void deleteSubjectTable(){
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).getWritableDatabase();
+        db.delete("subject",null,null);
+        db.delete("syllabus",null,null);
+    }
 
 
 

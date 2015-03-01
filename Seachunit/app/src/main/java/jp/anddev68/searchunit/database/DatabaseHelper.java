@@ -55,6 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
      * @param departId
      * @param gradeId
      */
+    /*
     public static ArrayList<Subject> getSubjectList(SQLiteDatabase db,int departId,int gradeId){
         ArrayList<Subject> subjects = new ArrayList<>();
         String sql = "SELECT subject_id,subject_name FROM subject WHERE "+
@@ -70,6 +71,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
         return subjects;
     }
+    */
 
     /**
      * 学科IDと学年IDと科目名を指定して教科IDを取得する
@@ -102,6 +104,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         cursor.close();
         return str;
     }
+
 
     /**
      * 仕様変更後
@@ -199,6 +202,17 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return id;
     }
 
+    /**
+     * 任意のタームの点数を更新する
+     * 変更：教科コードをキーとして点数を取得する
+     */
+    public static int updatePointValue(SQLiteDatabase db,int subjectId,int termId,int value){
+        String sql = String.format("UPDATE point SET value = %d WHERE subject_id =%d AND term_id=%d",
+                value,subjectId,termId);
+        tryExecSql(db,sql);
+        return 0;
+    }
+
 
     /**
      * 教科を追加
@@ -223,6 +237,17 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return 0;
     }
 
+    /**
+     * 任意のタームの点数を追加する
+     */
+    public static int insertPoint(SQLiteDatabase db,int subjectId,int termId,int value){
+        String sql = String.format(
+                "INSERT INTO point(subject_id,term_id,value)"+
+                        " VALUES(%d,%d,%d);",subjectId,termId,value);
+        tryExecSql(db,sql);
+        return 0;
+    }
+
 
     /**
      * シラバスコードを取得
@@ -239,6 +264,20 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         cursor.close();
         return id;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -382,16 +421,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return 0;
     }
 
-    /**
-     * 点数を追加
-     */
-    public static int insertPoint(SQLiteDatabase db,int subjectId,int termId,int value){
-        String sql = String.format(
-                "INSERT INTO point(subject_id,term_id,value)"+
-                        " VALUES(%d,%d,%d);",subjectId,termId,value);
-        tryExecSql(db,sql);
-        return 0;
-    }
+
 
 
 

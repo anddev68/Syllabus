@@ -27,5 +27,20 @@
             android:summary="選択した科＋一般科で表示します"
             android:checked="false" />
 
+        <Preference
+            android:key="dlPoint"
+            android:title="点数データの消去"
+            android:summary="未実装" />
+
+        <Preference
+            android:key="dlSubject"
+            android:title="教科とシラバスデータの消去"
+            android:summary="新学期や動作不安定時に使ってください" />
+
+        <Preference
+            android:key="osp"
+            android:title="オープンソースプロジェクト"
+            android:summary="This software is under the Apache License2.0" />
+
     </PreferenceCategory>
 </PreferenceScreen>

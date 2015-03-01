@@ -186,7 +186,7 @@ public class SubjectListActivity extends Activity {
 
         //  データを取得する
         AbstractParser parser = new GnctParser();
-        FetchSubjectListTask task = new FetchSubjectListTask(this,parser,_db,_grade);
+        FetchSubjectListTask task = new FetchSubjectListTask(this,parser,_grade);
         allSubjectName = DatabaseHelper.getAllSubjectName(_db, _grade, _depart);
         gSubjectName = DatabaseHelper.getAllSubjectName(_db, _grade, "ALL");
 
@@ -198,12 +198,9 @@ public class SubjectListActivity extends Activity {
         if(_plusGMode && gSubjectName.isEmpty() ) task.addDownloadSrc(getTopUrl("ALL",null),"ALL");
 
 
-
         //  タスクの数が0以下ならデータを追加して終了
         if ( task.getSrcCount() <= 0){
-            adapter.addAll(allSubjectName);
-            if(_plusGMode && !_depart.equals("ALL")) adapter.addAll(gSubjectName);
-            return;
+            onEndTask();
         }
 
         //  タスクを実行する
@@ -273,8 +270,8 @@ public class SubjectListActivity extends Activity {
                 openDetailActivity(subjectId,subjectName);
                 break;
             case MODE_REGISTER:
-                Toast.makeText(this,"No Implemented",Toast.LENGTH_SHORT).show();
-                //openRegistActivity(subject,url);
+                //  Toast.makeText(this,"No Implemented",Toast.LENGTH_SHORT).show();
+                openRegistActivity(subjectId,subjectName);
                 break;
 
 
@@ -332,7 +329,7 @@ public class SubjectListActivity extends Activity {
 
         //  解析用のパーサーを作成
         AbstractParser parser = new GnctParser();
-        FetchSubjectListTask task = new FetchSubjectListTask(this,parser,db,_grade);
+        FetchSubjectListTask task = new FetchSubjectListTask(this,parser,_grade);
 
         //  解析するURLを追加する
 
@@ -422,13 +419,13 @@ public class SubjectListActivity extends Activity {
 
     /**
      * 点数登録画面を開く
-     * @param subject 科目
-     * @param url URL
+     * @param subjectName 科目
      */
-    private void openRegistActivity(Subject subject,String url){
+    private void openRegistActivity(int subjectId,String subjectName){
+
         Intent intent = new Intent(this,RegistActivity.class);
-        intent.putExtra("subject_name",subject.subjectName);
-        intent.putExtra("subject_id",subject.subjectId);
+        intent.putExtra("subject_name",subjectName);
+        intent.putExtra("subject_id",subjectId);
         startActivity(intent);
     }
 

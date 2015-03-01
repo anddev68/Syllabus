@@ -10,9 +10,11 @@ public class Subject {
     public String depart;
     public String syllabusCode;
 
-    public Subject(int id,String name){
+    public Subject(int id,String name,String depart,String grade){
         this.subjectId = id;
         this.subjectName = name;
+        this.depart = depart;
+        this.grade = grade;
     }
 
     @Override

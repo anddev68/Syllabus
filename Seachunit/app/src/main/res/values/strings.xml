@@ -7,10 +7,15 @@
 
     <string-array name="term_array">
         <item>前期中間</item>
+        <item>前期中間(最大値)</item>
         <item>前期期末</item>
+        <item>前期期末(最大値)</item>
         <item>後期中間</item>
+        <item>後期中間(最大値)</item>
         <item>後期期末</item>
+        <item>後期期末(最大値)</item>
         <item>課題</item>
+        <item>課題(最大値)</item>
     </string-array>
 
     <!-- 学科(表示される値) -->
@@ -63,6 +68,7 @@
         <item>4</item>
         <item>5</item>
     </string-array>
+
 
 
 
