@@ -12,51 +12,53 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import jp.anddev68.searchunit.database.DatabaseAccessor;
 import jp.anddev68.searchunit.database.DatabaseHelper;
 import jp.anddev68.searchunit.parser.AbstractParser;
 import jp.anddev68.searchunit.parser.OnParsedLineListener;
 import jp.anddev68.searchunit.structure.Subject;
 
 /**
- * 任意のパーサーで指定したURLをパースし、
- * データベースに教科を追加する
+ * �C�ӂ̃p�[�T�[�Ŏw�肵��URL���p�[�X���A
+ * �f�[�^�x�[�X�ɋ��Ȃ�ǉ�����
  *
  *
  *
  * Created by hideki on 2014/12/11.
  */
-public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer>{
+public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer> {
 
-    public interface TaskEndListener{
+    public interface TaskEndListener {
         public void onEndTask();
     }
-
-
-
-
 
     ProgressDialog _dialog;
     Context _context;
     AbstractParser _parser;
 
-    //  ソースURLと学科
+
+    //  �\�[�XURL�Ɗw��
     LinkedList<String> _urls;
     LinkedList<String> _departs;
 
-    //  データベースに追加するデータのバッファ
+    //  �f�[�^�x�[�X�ɒǉ�����f�[�^�̃o�b�t�@
     ArrayList<Subject> _subjects;
 
     TaskEndListener _listener;
-    public void setTaskEndListener(TaskEndListener l){ _listener = l; }
+
+    public void setTaskEndListener(TaskEndListener l) {
+        _listener = l;
+    }
 
 
     /**
-     * 非同期でネットからダウンロードし、データベースに格納する
+     * �񓯊��Ńl�b�g����_�E�����[�h���A�f�[�^�x�[�X�Ɋi�[����
+     *
      * @param context
      * @param parser
-     * @param grade 未使用
+     * @param grade   ���g�p
      */
-    public FetchSubjectListTask(Context context,AbstractParser parser,String grade){
+    public FetchSubjectListTask(Context context, AbstractParser parser, String grade) {
         _context = context;
         _parser = parser;
         _departs = new LinkedList<>();
@@ -65,46 +67,52 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer>{
 
         _parser.setOnParsedLineListener(new OnParsedLineListener() {
             @Override
-            public boolean onParsedLine(String subjectName,String url,String code,int grade) {
-                return FetchSubjectListTask.this.onParsedLine(subjectName,url,code,""+grade);
+            public boolean onParsedLine(String subjectName, String url, String code, int grade) {
+                return FetchSubjectListTask.this.onParsedLine(subjectName, url, code, "" + grade);
             }
         });
-
-
 
 
     }
 
 
     /**
-     * ダウンロードするソースを追加する
+     * �_�E�����[�h����\�[�X��ǉ�����
      */
-    public void addDownloadSrc(String url,String depart){
+    public void addDownloadSrc(String url, String depart) {
         _urls.addLast(url);
         _departs.addLast(depart);
     }
 
 
     /**
-     * ダウンロードするソースの数を取得
+     * �_�E�����[�h����\�[�X�̐����擾
+     *
      * @return
      */
-    public int getSrcCount(){
+    public int getSrcCount() {
         return _urls.size();
     }
 
 
     @Override
     protected Integer doInBackground(String... params) {
-        while(!_urls.isEmpty()){
-            //  追加されたソースを順番に解析していく
+        //	���̎��_�Ńf�[�^�x�[�X�̃C���X�^���X���쐬;
+        DatabaseHelper helper = new DatabaseHelper(_context);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        while (!_urls.isEmpty()) {
+            //  �ǉ����ꂽ�\�[�X�����Ԃɉ�͂��Ă���
             _parser.start(_urls.getFirst());
             _urls.removeFirst();
             _departs.removeFirst();
         }
 
-        //  データベースに追加する
+        //  �f�[�^�x�[�X�ɒǉ�����
         //insertDB();
+
+        //  �f�[�^�x�[�X�����
+        db.close();
 
         _dialog.dismiss();
 
@@ -113,6 +121,7 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer>{
 
     @Override
     protected void onPreExecute() {
+        //	�_�C�A���O�쐬
         _dialog = new ProgressDialog(_context);
         _dialog.setTitle("Creating List...");
         _dialog.show();
@@ -130,54 +139,39 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer>{
 
 
     /**
-     * 1行解析した結果がここに入ります
-     * @param subjectName 教科名
-     * @param url シラバスへのURL
-     * @param code シラバスコード
-     * @param grade 学年
+     * 1�s��͂������ʂ������ɓ���܂�
+     *
+     * @param subjectName ���Ȗ�
+     * @param url         �V���o�X�ւ�URL
+     * @param code        �V���o�X�R�[�h
+     * @param grade       �w�N
      * @return
      */
-    private boolean onParsedLine(String subjectName,String url,String code,String grade){
+    private boolean onParsedLine(String subjectName, String url, String code, String grade) {
 
         //if(gradeId!=_gradeId) return true;
 
-        SQLiteDatabase db = DatabaseHelper.getInstance(_context).getWritableDatabase();
-        db.acquireReference();
+        DatabaseHelper helper = new DatabaseHelper(_context);
+        SQLiteDatabase db = helper.getWritableDatabase();
 
+        //  ���ȃe�[�u���ɒǉ�
+        DatabaseAccessor.insertSubject(db, subjectName, _departs.getFirst(), grade);
 
-        //  教科テーブルに追加
-        DatabaseHelper.insertSubject(db,subjectName,_departs.getFirst(),grade);
+        //  �V���o�X�e�[�u����URL��ǉ�
+        int subjectId = DatabaseAccessor.getSubjectId(db, subjectName, grade, _departs.getFirst(), -1);
+        DatabaseAccessor.insertSyllabus(db, code, subjectId);
 
-        //  シラバステーブルにURLを追加
-        int subjectId = DatabaseHelper.getSubjectId(db,subjectName,grade,_departs.getFirst(),-1);
-        DatabaseHelper.insertSyllabus(db,code,subjectId);
+        Log.d("", "+++onParsedLine() " + subjectName);
 
-        Log.d("", "+++onParsedLine() "+subjectName);
-
-        DatabaseHelper.getInstance(_context).close();
+        db.close();
 
         return true;
     }
 
-    /**
-     * プリコンパイルステートメントを利用してデータベースに書き込む
-     */
-    private void insertDB(){
-        SQLiteDatabase db = DatabaseHelper.getInstance(_context).getWritableDatabase();
-        db.acquireReference();
-
-        //  データ
-        SQLiteStatement stat1 = db.compileStatement( "insert into profile_table(name, age) values(?, ?)" );
-
-
-        //  シラバスコードを追加
-
-
-        db.close();
-    }
-
-
-
-
 
 }
+
+
+
+
+

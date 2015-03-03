@@ -1,4 +1,4 @@
-package jp.anddev68.searchunit;
+﻿package jp.anddev68.searchunit;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -28,11 +28,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Set;
 
+import jp.anddev68.searchunit.database.DatabaseAccessor;
 import jp.anddev68.searchunit.database.DatabaseHelper;
 import jp.anddev68.searchunit.parser.AbstractParser;
 import jp.anddev68.searchunit.parser.GnctParser;
 import jp.anddev68.searchunit.structure.Subject;
 
+/**
+	教科一覧のアクティビティー
+*/
 
 public class SubjectListActivity extends Activity {
 
@@ -43,10 +47,6 @@ public class SubjectListActivity extends Activity {
     private static final int SELECT_COLOR = Color.rgb(0x55,0x55,0x55);
     private int _mode;
 
-
-
-
-    private SQLiteDatabase _db;
     private String _grade;
     private boolean _plusGMode;  //  一般科追加モード
     private String _depart;
@@ -88,8 +88,6 @@ public class SubjectListActivity extends Activity {
 
         //  設定値を取得
         _pref = PreferenceManager.getDefaultSharedPreferences(this);
-        DatabaseHelper helper = DatabaseHelper.getInstance(getApplicationContext());
-        _db = helper.getWritableDatabase();
         _grade = _pref.getString("grade","");
         _depart = _pref.getString("depart","");
         _plusGMode = _pref.getBoolean("plusG",false);
@@ -187,8 +185,10 @@ public class SubjectListActivity extends Activity {
         //  データを取得する
         AbstractParser parser = new GnctParser();
         FetchSubjectListTask task = new FetchSubjectListTask(this,parser,_grade);
-        allSubjectName = DatabaseHelper.getAllSubjectName(_db, _grade, _depart);
-        gSubjectName = DatabaseHelper.getAllSubjectName(_db, _grade, "ALL");
+        DatabaseHelper helper = new DatabaseHelper(this);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        allSubjectName = DatabaseAccessor.getAllSubjectName(db, _grade, _depart);
+        gSubjectName = DatabaseAccessor.getAllSubjectName(db, _grade, "ALL");
 
         Log.d("データ数","ALL:"+allSubjectName.size());
         Log.d("データ数","G:"+gSubjectName.size());
@@ -220,19 +220,20 @@ public class SubjectListActivity extends Activity {
     /**
      * データフェッチが終了したとき
      * アダプターにセットする
+     *
+     * DBをもう一回取得しなおす方式に変更
+     *
      */
     private void onEndTask(){
-
-       // synchronized (_db) {
-            Log.d("", "+++onEndTask()");
-            adapter.clear();
-            allSubjectName = DatabaseHelper.getAllSubjectName(_db, _grade, _depart);
-            gSubjectName = DatabaseHelper.getAllSubjectName(_db, _grade, "ALL");
-            if (!allSubjectName.isEmpty()) adapter.addAll(allSubjectName);
-            if (_plusGMode && !gSubjectName.isEmpty() && !_depart.equals("ALL"))
-                adapter.addAll(gSubjectName);
-        //}
-
+    	Log.d("", "+++onEndTask()");
+        adapter.clear();
+	    DatabaseHelper helper = new DatabaseHelper(this);
+	    SQLiteDatabase db = helper.getReadableDatabase();
+        allSubjectName = DatabaseAccessor.getAllSubjectName(db, _grade, _depart);
+        gSubjectName = DatabaseAccessor.getAllSubjectName(db, _grade, "ALL");
+        if (!allSubjectName.isEmpty()) adapter.addAll(allSubjectName);
+        if (_plusGMode && !gSubjectName.isEmpty() && !_depart.equals("ALL")) adapter.addAll(gSubjectName);
+	    db.close();
     }
 
     /**
@@ -243,22 +244,23 @@ public class SubjectListActivity extends Activity {
      */
     private void onListView1ItemClick(AdapterView<?> parent,View view,int position,long id){
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-
+        DatabaseHelper helper = new DatabaseHelper(this);
+        SQLiteDatabase db = helper.getReadableDatabase();
         String subjectName = (String)parent.getItemAtPosition(position);
         String depart = pref.getString("depart",null);
         String grade = pref.getString("grade",null);
-        int subjectId = DatabaseHelper.getSubjectId(_db,subjectName,grade,depart,-1);
+        int subjectId = DatabaseAccessor.getSubjectId(db,subjectName,grade,depart,-1);
 
         //  専門科に該当教科がない場合については一般科として扱う
         if(subjectId==-1&&_plusGMode){
-            subjectId = DatabaseHelper.getSubjectId(_db,subjectName,grade,"ALL",-1);
+            subjectId = DatabaseAccessor.getSubjectId(db,subjectName,grade,"ALL",-1);
             depart = "ALL";
         }
 
         switch(_mode){
             case MODE_SYLLABUS:
                 String url = getTopUrl(depart,null);
-                String code = DatabaseHelper.getSyllabusCode(_db,subjectId,null);
+                String code = DatabaseAccessor.getSyllabusCode(db,subjectId,null);
 
                 String abs_path = url.substring(0,url.lastIndexOf('/'))+"/";    //  URLを絶対パスに変換
                 abs_path = abs_path+code+".pdf";
@@ -276,7 +278,7 @@ public class SubjectListActivity extends Activity {
 
 
         }
-
+        db.close();
 
 
     }
@@ -307,41 +309,6 @@ public class SubjectListActivity extends Activity {
     }
 
 
-
-    /**
-     * 初回のみ教科リストを取得する
-     * @use FetchSubjectListTask
-     */
-    private void firstFetch(String depart){
-        DatabaseHelper helper = DatabaseHelper.getInstance(getApplicationContext());
-        SQLiteDatabase db = helper.getWritableDatabase();
-
-        String[] urlArray = getResources().getStringArray(R.array.url_array);   //  学科URL表
-        String[] departArray = getResources().getStringArray(R.array.depart_entryValues);   //学科表
-        String url = "";
-        for(int i=0; i<departArray.length; i++){
-            if(depart.equals(departArray[i])){
-                //  一致した番号がその学科のURL
-                url = urlArray[i];  //  選択されている学科と表で一致した番号を取得
-            }
-        }
-        Log.d("SubjectListAct","Start DL From:"+url);
-
-        //  解析用のパーサーを作成
-        AbstractParser parser = new GnctParser();
-        FetchSubjectListTask task = new FetchSubjectListTask(this,parser,_grade);
-
-        //  解析するURLを追加する
-
-
-        task.setTaskEndListener(new FetchSubjectListTask.TaskEndListener() {
-            @Override
-            public void onEndTask() {
-                SubjectListActivity.this.onEndTask();
-            }
-        });
-        task.execute();
-    }
 
 
     /**
@@ -441,3 +408,4 @@ public class SubjectListActivity extends Activity {
     }
 
 }
+

@@ -29,7 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="選択..."
+            android:text="選択してください..."
             android:id="@+id/textView"
             android:drawableRight="@android:drawable/ic_menu_more"
             android:layout_weight="1"

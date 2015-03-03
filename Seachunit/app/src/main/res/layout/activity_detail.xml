@@ -183,6 +183,34 @@
             android:max="10"
             android:progress="6" />
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="あと"
+                android:id="@+id/textView9" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/textView10"
+                android:textSize="40dp"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="点足りません"
+                android:id="@+id/textView11"
+                android:gravity="right" />
+        </LinearLayout>
+
 
     </LinearLayout>
 

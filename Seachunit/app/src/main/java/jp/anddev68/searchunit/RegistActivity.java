@@ -82,6 +82,23 @@ public class RegistActivity extends Activity{
         int index = indexOf(termView.getText().toString());   //  termid
         int value = Integer.parseInt(numberView.getText().toString());  //  value
 
+        if(index==-1){
+            Toast.makeText(this,"学期を選択してください",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        /*
+        if( 0>value && value > 100){
+            new AlertDialog.Builder(this)
+                    .setTitle("Warning")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setMessage("0~100点ではありません。\n本当にこれで登録しますか？")
+                    .setPositiveButton("OK",null)
+                    .setNegativeButton("NO",null)
+                    .show();
+        }
+        */
+
         //  値を新規登録か、上書きかの決定をデータがあるかどうかで判別する。
         int exist_flag =  DatabaseHelper.getPointValue(db,subjectId,index,-1);
         if(exist_flag==-1) DatabaseHelper.insertPoint(db,subjectId,index,value); // new
@@ -142,7 +159,6 @@ public class RegistActivity extends Activity{
 
 
     }
-
 
 
     private int indexOf(String str){

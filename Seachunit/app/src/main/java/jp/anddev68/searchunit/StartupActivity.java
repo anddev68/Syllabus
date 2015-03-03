@@ -19,8 +19,8 @@ import jp.anddev68.searchunit.structure.Subject;
 
 /**
  *
- * TODO:‰E‚©‚ç“ü‚Á‚Ä¶‚Ö”²‚¯‚éƒAƒjƒ[ƒVƒ‡ƒ“‚Ì’Ç‰Á,Acitivty‚Ì‘@ˆÛ,2‰ñ‹N“®‚Ì”jŠü
- * TODO:ƒ‰ƒCƒZƒ“ƒX‚ğapache2.0‚É•ÏX
+ * TODO:ï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äï¿½ï¿½Ö”ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½Ì’Ç‰ï¿½,Acitivtyï¿½Ì‘@ï¿½ï¿½,2ï¿½ï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½Ì”jï¿½ï¿½
+ * TODO:ï¿½ï¿½ï¿½Cï¿½Zï¿½ï¿½ï¿½Xï¿½ï¿½apache2.0ï¿½É•ÏX
  *
  * Created by anddev68 on 15/02/27.
  */
@@ -61,14 +61,14 @@ public class StartupActivity extends Activity implements ViewSwitcher.ViewFactor
 
         pref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        //  ‰‰ñ‹N“®ƒ`ƒFƒbƒN
+        //  ï¿½ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N
         if( !pref.getBoolean("first_boot",true) ){
-            //  2‰ñ–ÚˆÈ~‚Í‹N“®‚µ‚È‚¢
+            //  2ï¿½ï¿½ÚˆÈ~ï¿½Í‹Nï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½
             startActivity(new Intent(this,SubjectListActivity.class));
             finish();
         }
 
-        //  ‰‰ñ‹N“®ƒtƒ‰ƒO‚ğÁ‚·
+        //  ï¿½ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½tï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         pref.edit().putBoolean("first_boot",false).commit();
 
 
@@ -82,11 +82,11 @@ public class StartupActivity extends Activity implements ViewSwitcher.ViewFactor
             public boolean onTouch(View v, MotionEvent event) {
                 switch(event.getAction()){
                     case MotionEvent.ACTION_UP:
-                        //  ‰E‚É“®‚¢‚½
+                        //  ï¿½Eï¿½É“ï¿½ï¿½ï¿½ï¿½ï¿½
                         if(oldX < event.getX() - 10){
                             showNext();
 
-                            //  ¶‚É“®‚¢‚½
+                            //  ï¿½ï¿½ï¿½É“ï¿½ï¿½ï¿½ï¿½ï¿½
                         }else if(oldX > event.getX()+10){
                             showPrevious();
 
@@ -109,7 +109,7 @@ public class StartupActivity extends Activity implements ViewSwitcher.ViewFactor
 
     @Override
     public View makeView() {
-        // ApiDemos->Views->ImageSwitcher‚Ìƒ\[ƒX‚©‚çƒƒ\ƒbƒh‚ğŠÛXƒRƒs[
+        // ApiDemos->Views->ImageSwitcherï¿½Ìƒ\ï¿½[ï¿½Xï¿½ï¿½ï¿½çƒï¿½\ï¿½bï¿½hï¿½ï¿½ï¿½ÛXï¿½Rï¿½sï¿½[
         ImageView i = new ImageView(this);
         i.setBackgroundColor(0xFF000000);
         i.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -126,19 +126,29 @@ public class StartupActivity extends Activity implements ViewSwitcher.ViewFactor
             finish();
             return;
         }
-        imageSwitcher.setInAnimation(inFromRightAnimation);
-        imageSwitcher.setOutAnimation(outToLeftAnimation);
+        //imageSwitcher.setInAnimation(inFromRightAnimation);
+        //imageSwitcher.setOutAnimation(outToLeftAnimation);
+
+        imageSwitcher.setInAnimation(inFromLeftAnimation);
+        imageSwitcher.setOutAnimation(outToRightAnimation);
+
+
         imageSwitcher.setImageResource(images[position]);
     }
 
     private void showPrevious(){
         position -= 1;
         if (position < 0) {
-            position = images.length - 1;
+            //  position = images.length - 1;
         }
-        imageSwitcher.setInAnimation(inFromLeftAnimation);
-        imageSwitcher.setOutAnimation(outToRightAnimation);
+        //imageSwitcher.setInAnimation(inFromLeftAnimation);
+        //imageSwitcher.setOutAnimation(outToRightAnimation);
+
+        imageSwitcher.setInAnimation(inFromRightAnimation);
+        imageSwitcher.setOutAnimation(outToLeftAnimation);
+
         imageSwitcher.setImageResource(images[position]);
+
     }
 
 

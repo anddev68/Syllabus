@@ -38,9 +38,12 @@ public class DetailActivity extends Activity implements View.OnClickListener{
     int subjectId;
 
     TextView[] textViews;    //  点数表示テーブル
+    TextView shortPointView;    //  不足点数用
     TextView subjectTextView;   //  教科名表示
     TextView unitTextView;      //  目標単位数
     SeekBar seekBar;
+    int[] points;   //  点数データ
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,12 +72,15 @@ public class DetailActivity extends Activity implements View.OnClickListener{
         subjectTextView = (TextView) findViewById(R.id.subject);
         subjectTextView.setText(subjectName);
         unitTextView = (TextView) findViewById(R.id.unit);
+        shortPointView = (TextView) findViewById(R.id.textView10);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 unitTextView.setText(""+progress);
+                //  不足点数をセットする
+                shortPointView.setText(""+getShortPoint(progress));
             }
 
             @Override
@@ -102,6 +108,8 @@ public class DetailActivity extends Activity implements View.OnClickListener{
 
         DatabaseHelper helper = DatabaseHelper.getInstance(this);
         SQLiteDatabase db = helper.getWritableDatabase();
+        points = new int[textViews.length];
+
 
         for(int i=0; i<textViews.length; i++){
             textViews[i].setOnClickListener(this);
@@ -109,9 +117,16 @@ public class DetailActivity extends Activity implements View.OnClickListener{
             //  タームIDはtextViewの添字と一緒
             //  0=中間点数,1=中間max・・・
             int point = DatabaseHelper.getPointValue(db,subjectId,i,-1);
-            if( point!=-1) textViews[i].setText(""+point);
+            if( point!=-1){
+                points[i] = point;
+                textViews[i].setText(""+point);
+            }
+
 
         }
+
+        //  不足点数をセットする
+        shortPointView.setText(""+getShortPoint(seekBar.getProgress()));
 
     }
 
@@ -144,6 +159,31 @@ public class DetailActivity extends Activity implements View.OnClickListener{
     }
 
 
+    /**
+     * 不足点数を算出
+     */
+    public int getShortPoint(int unit){
+        int max = 0;
+        int current = 0;
+        double per = 0.0;
+
+        for(int i=0; i<points.length; i+=2){
+            current+=points[i];
+        }
+
+        for(int i=1; i<points.length; i+=2){
+            max += points[i];
+        }
+
+        //  10のみ95%に変更
+        if(unit==10) per = 0.95;
+        else per = (double)unit / 10.0;
+
+        //  最低必要な点数 - 現在の点数
+        //  切り上げ処理を行っています
+        return (int)Math.ceil(max*per) - current;
+
+    }
 
 
 }
