@@ -28,6 +28,17 @@
             android:checked="false" />
 
         <Preference
+            android:key="guide"
+            android:title="使い方"
+            android:summary="スタートアップガイドを開きます" />
+
+
+        <Preference
+            android:key="export"
+            android:title="点数データのエクスポート"
+            android:summary="未実装" />
+
+        <Preference
             android:key="dlPoint"
             android:title="点数データの消去"
             android:summary="未実装" />

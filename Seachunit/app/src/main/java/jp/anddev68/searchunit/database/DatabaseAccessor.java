@@ -1,4 +1,4 @@
-﻿package jp.anddev68.searchunit.database;
+package jp.anddev68.searchunit.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;

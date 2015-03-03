@@ -43,6 +43,7 @@ public class PrefActivity extends PreferenceActivity{
 
     Preference _deletePointButton;
     Preference _deleteSubjectButton;
+    Preference _guideButton;
 
     Preference _license;
 
@@ -109,6 +110,19 @@ public class PrefActivity extends PreferenceActivity{
                 return true;
             }
         });
+
+        _guideButton = findPreference("guide");
+        /*
+        _guideButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent()
+                startActivity(intent);
+
+                return true;
+            }
+        });
+        */
 
         //  サマリーを変更
         setSummary();
@@ -224,9 +238,10 @@ public class PrefActivity extends PreferenceActivity{
                 .show();
     }
     private void deleteSubjectTable(){
-        SQLiteDatabase db = DatabaseHelper.getInstance(this).getWritableDatabase();
+        SQLiteDatabase db = new DatabaseHelper(this).getWritableDatabase();
         db.delete("subject",null,null);
         db.delete("syllabus",null,null);
+        db.close();
     }
 
 

@@ -35,6 +35,11 @@ public class StartupActivity extends Activity implements ViewSwitcher.ViewFactor
         R.drawable.slide4,
         R.drawable.slide5,
         R.drawable.slide6,
+        R.drawable.slide7,
+        R.drawable.slide8,
+        R.drawable.slide9
+
+
     };
 
     int position = 0;

@@ -1,4 +1,4 @@
-﻿package jp.anddev68.searchunit;
+package jp.anddev68.searchunit;
 
 import android.app.Activity;
 import android.content.Intent;

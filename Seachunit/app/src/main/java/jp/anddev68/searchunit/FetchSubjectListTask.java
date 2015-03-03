@@ -19,8 +19,8 @@ import jp.anddev68.searchunit.parser.OnParsedLineListener;
 import jp.anddev68.searchunit.structure.Subject;
 
 /**
- * �C�ӂ̃p�[�T�[�Ŏw�肵��URL���p�[�X���A
- * �f�[�^�x�[�X�ɋ��Ȃ�ǉ�����
+ * ?C???p?[?T?[??w????URL???p?[?X???A
+ * ?f?[?^?x?[?X????????????
  *
  *
  *
@@ -37,11 +37,11 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer> {
     AbstractParser _parser;
 
 
-    //  �\�[�XURL�Ɗw��
+    //  ?\?[?XURL??w??
     LinkedList<String> _urls;
     LinkedList<String> _departs;
 
-    //  �f�[�^�x�[�X�ɒǉ�����f�[�^�̃o�b�t�@
+    //  ?f?[?^?x?[?X????????f?[?^??o?b?t?@
     ArrayList<Subject> _subjects;
 
     TaskEndListener _listener;
@@ -52,11 +52,11 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer> {
 
 
     /**
-     * �񓯊��Ńl�b�g����_�E�����[�h���A�f�[�^�x�[�X�Ɋi�[����
+     * ? ???l?b?g????_?E?????[?h???A?f?[?^?x?[?X??i?[????
      *
      * @param context
      * @param parser
-     * @param grade   ���g�p
+     * @param grade   ???g?p
      */
     public FetchSubjectListTask(Context context, AbstractParser parser, String grade) {
         _context = context;
@@ -77,7 +77,7 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer> {
 
 
     /**
-     * �_�E�����[�h����\�[�X��ǉ�����
+     * ?_?E?????[?h????\?[?X????????
      */
     public void addDownloadSrc(String url, String depart) {
         _urls.addLast(url);
@@ -86,7 +86,7 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer> {
 
 
     /**
-     * �_�E�����[�h����\�[�X�̐����擾
+     * ?_?E?????[?h????\?[?X??????擾
      *
      * @return
      */
@@ -97,21 +97,21 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer> {
 
     @Override
     protected Integer doInBackground(String... params) {
-        //	���̎��_�Ńf�[�^�x�[�X�̃C���X�^���X���쐬;
+        //	??????_??f?[?^?x?[?X??C???X?^???X????;
         DatabaseHelper helper = new DatabaseHelper(_context);
         SQLiteDatabase db = helper.getWritableDatabase();
 
         while (!_urls.isEmpty()) {
-            //  �ǉ����ꂽ�\�[�X�����Ԃɉ�͂��Ă���
+            //  ????????\?[?X???????????????
             _parser.start(_urls.getFirst());
             _urls.removeFirst();
             _departs.removeFirst();
         }
 
-        //  �f�[�^�x�[�X�ɒǉ�����
+        //  ?f?[?^?x?[?X????????
         //insertDB();
 
-        //  �f�[�^�x�[�X�����
+        //  ?f?[?^?x?[?X??????
         db.close();
 
         _dialog.dismiss();
@@ -121,7 +121,7 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer> {
 
     @Override
     protected void onPreExecute() {
-        //	�_�C�A���O�쐬
+        //	?_?C?A???O??
         _dialog = new ProgressDialog(_context);
         _dialog.setTitle("Creating List...");
         _dialog.show();
@@ -139,12 +139,12 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer> {
 
 
     /**
-     * 1�s��͂������ʂ������ɓ���܂�
+     * 1?s??????????????????????
      *
-     * @param subjectName ���Ȗ�
-     * @param url         �V���o�X�ւ�URL
-     * @param code        �V���o�X�R�[�h
-     * @param grade       �w�N
+     * @param subjectName ?????
+     * @param url         ?V???o?X???URL
+     * @param code        ?V???o?X?R?[?h
+     * @param grade       ?w?N
      * @return
      */
     private boolean onParsedLine(String subjectName, String url, String code, String grade) {
@@ -154,10 +154,10 @@ public class FetchSubjectListTask extends AsyncTask<String,Integer,Integer> {
         DatabaseHelper helper = new DatabaseHelper(_context);
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        //  ���ȃe�[�u���ɒǉ�
+        //  ????e?[?u??????
         DatabaseAccessor.insertSubject(db, subjectName, _departs.getFirst(), grade);
 
-        //  �V���o�X�e�[�u����URL��ǉ�
+        //  ?V???o?X?e?[?u????URL????
         int subjectId = DatabaseAccessor.getSubjectId(db, subjectName, grade, _departs.getFirst(), -1);
         DatabaseAccessor.insertSyllabus(db, code, subjectId);
 

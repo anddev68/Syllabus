@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import jp.anddev68.searchunit.database.DatabaseAccessor;
 import jp.anddev68.searchunit.database.DatabaseHelper;
 
 /**
@@ -76,7 +77,7 @@ public class RegistActivity extends Activity{
      * エンターキーが押されたときの処理
      */
     public void onClickEnter(View v){
-        DatabaseHelper helper = DatabaseHelper.getInstance(this);
+        DatabaseHelper helper = new DatabaseHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
 
         int index = indexOf(termView.getText().toString());   //  termid
@@ -100,9 +101,9 @@ public class RegistActivity extends Activity{
         */
 
         //  値を新規登録か、上書きかの決定をデータがあるかどうかで判別する。
-        int exist_flag =  DatabaseHelper.getPointValue(db,subjectId,index,-1);
-        if(exist_flag==-1) DatabaseHelper.insertPoint(db,subjectId,index,value); // new
-        else DatabaseHelper.updatePointValue(db,subjectId,index,value); //  override
+        int exist_flag =  DatabaseAccessor.getPointValue(db, subjectId, index, -1);
+        if(exist_flag==-1) DatabaseAccessor.insertPoint(db,subjectId,index,value); // new
+        else DatabaseAccessor.updatePointValue(db,subjectId,index,value); //  override
 
 
         //  TODO

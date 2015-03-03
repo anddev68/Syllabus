@@ -24,6 +24,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.net.URLEncoder;
 
+import jp.anddev68.searchunit.database.DatabaseAccessor;
 import jp.anddev68.searchunit.database.DatabaseHelper;
 
 
@@ -80,7 +81,7 @@ public class DetailActivity extends Activity implements View.OnClickListener{
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 unitTextView.setText(""+progress);
                 //  不足点数をセットする
-                shortPointView.setText(""+getShortPoint(progress));
+               setShortPointView(getShortPoint(progress));
             }
 
             @Override
@@ -106,7 +107,7 @@ public class DetailActivity extends Activity implements View.OnClickListener{
         textViews[8] = (TextView) findViewById(R.id.text4_1);
         textViews[9] = (TextView) findViewById(R.id.text4_2);
 
-        DatabaseHelper helper = DatabaseHelper.getInstance(this);
+        DatabaseHelper helper = new DatabaseHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
         points = new int[textViews.length];
 
@@ -116,7 +117,7 @@ public class DetailActivity extends Activity implements View.OnClickListener{
 
             //  タームIDはtextViewの添字と一緒
             //  0=中間点数,1=中間max・・・
-            int point = DatabaseHelper.getPointValue(db,subjectId,i,-1);
+            int point = DatabaseAccessor.getPointValue(db,subjectId,i,-1);
             if( point!=-1){
                 points[i] = point;
                 textViews[i].setText(""+point);
@@ -126,7 +127,7 @@ public class DetailActivity extends Activity implements View.OnClickListener{
         }
 
         //  不足点数をセットする
-        shortPointView.setText(""+getShortPoint(seekBar.getProgress()));
+        setShortPointView(getShortPoint(seekBar.getProgress()));
 
     }
 
@@ -138,7 +139,7 @@ public class DetailActivity extends Activity implements View.OnClickListener{
      * タームIDと科目名,教科IDを渡して開く
      * @param termId
      */
-    private void openRegisterAcitivty(int termId){
+    private void openRegisterActivity(int termId){
         Intent intent = new Intent(this,RegistActivity.class);
         intent.putExtra("subject_id",subjectId);
         intent.putExtra("subject_name",subjectName);
@@ -152,7 +153,7 @@ public class DetailActivity extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         for(int i=0; i<textViews.length; i++){
             if( textViews[i].getId() == v.getId() ){
-                openRegisterAcitivty(i);
+                openRegisterActivity(i);
                 return;
             }
         }
@@ -162,7 +163,7 @@ public class DetailActivity extends Activity implements View.OnClickListener{
     /**
      * 不足点数を算出
      */
-    public int getShortPoint(int unit){
+    private int getShortPoint(int unit){
         int max = 0;
         int current = 0;
         double per = 0.0;
@@ -181,8 +182,21 @@ public class DetailActivity extends Activity implements View.OnClickListener{
 
         //  最低必要な点数 - 現在の点数
         //  切り上げ処理を行っています
-        return (int)Math.ceil(max*per) - current;
+        int r = (int)Math.ceil(max*per) - current;
+        if(r<0) r = 0;
 
+        return r;
+
+    }
+
+    /**
+     * 点数をセット
+     */
+    private void setShortPointView(int point){
+        if(point<=0)
+            shortPointView.setText("CLEAR!!!");
+        else
+            shortPointView.setText(""+point);
     }
 
 
