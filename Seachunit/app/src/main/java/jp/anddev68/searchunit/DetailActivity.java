@@ -15,7 +15,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -42,6 +44,8 @@ public class DetailActivity extends Activity implements View.OnClickListener{
     TextView shortPointView;    //  不足点数用
     TextView subjectTextView;   //  教科名表示
     TextView unitTextView;      //  目標単位数
+    RadioGroup radioGroup;     //  semesterチェック用
+
     SeekBar seekBar;
     int[] points;   //  点数データ
 
@@ -95,6 +99,17 @@ public class DetailActivity extends Activity implements View.OnClickListener{
             }
         });
 
+        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                onChangeRadioButton(checkedId);
+            }
+        });
+
+
+
+
         textViews = new TextView[10];
         textViews[0] = (TextView) findViewById(R.id.text0_1);
         textViews[1] = (TextView) findViewById(R.id.text0_2);
@@ -119,9 +134,17 @@ public class DetailActivity extends Activity implements View.OnClickListener{
             //  0=中間点数,1=中間max・・・
             int point = DatabaseAccessor.getPointValue(db,subjectId,i,-1);
             if( point!=-1){
+                //  点数が存在したらそれを貼る
                 points[i] = point;
                 textViews[i].setText(""+point);
+            }else{
+                //  点数が存在しなければMAX100で作成する
+                if(i%2==1 && i!=9){
+                    DatabaseAccessor.insertPoint(db,subjectId,i,100);
+                }
             }
+
+
 
 
         }
@@ -169,11 +192,13 @@ public class DetailActivity extends Activity implements View.OnClickListener{
         double per = 0.0;
 
         for(int i=0; i<points.length; i+=2){
-            current+=points[i];
+            if(textViews[i].isEnabled())
+                current+=points[i];
         }
 
         for(int i=1; i<points.length; i+=2){
-            max += points[i];
+            if(textViews[i].isEnabled())
+                max += points[i];
         }
 
         //  10のみ95%に変更
@@ -197,6 +222,65 @@ public class DetailActivity extends Activity implements View.OnClickListener{
             shortPointView.setText("CLEAR!!!");
         else
             shortPointView.setText(""+point);
+    }
+
+
+    /**
+     *
+     */
+    private void onChangeRadioButton(int id){
+        switch(id){
+            case R.id.radioButton:
+                changeSemester(0);
+                return;
+            case R.id.radioButton2:
+                changeSemester(1);
+                return;
+            case R.id.radioButton3:
+                changeSemester(2);
+                return;
+
+
+        }
+    }
+
+
+    /**
+     * semesterの変更を行う
+     * 該当テキストビューを無効化して計算から取り除く
+     */
+    private void changeSemester(int sem){
+        int i;
+        for(i=0; i<10; i++) {
+            textViews[i].setEnabled(true);
+        }
+
+        switch(sem){
+            case 0: //  通年
+                break;
+            case 1: //  前期
+                for(i=4; i<8; i++) {
+                    textViews[i].setEnabled(false);
+                }
+                break;
+            case 2: //  後期
+                for(i=0; i<4; i++) {
+                    textViews[i].setEnabled(false);
+                }
+                break;
+
+        }
+
+
+        //  不足点数をセットする
+        setShortPointView(getShortPoint(seekBar.getProgress()));
+
+    }
+
+
+
+    private TextView findTextView(int id){
+        return (TextView) findViewById(id);
     }
 
 

@@ -8,8 +8,8 @@ android {
         applicationId "jp.anddev68.searchunit"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 8
-        versionName "3.0.0c"
+        versionCode 9
+        versionName "3.0.1"
     }
     buildTypes {
         release {

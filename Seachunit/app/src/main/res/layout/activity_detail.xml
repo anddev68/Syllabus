@@ -11,11 +11,48 @@
 
         <TextView
             android:layout_width="fill_parent"
-            android:layout_height="100dp"
+            android:layout_height="70dp"
             android:text="教科名"
             android:id="@+id/subject"
             android:gravity="center"
             android:textSize="30dp" />
+
+        <RadioGroup
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="false"
+            android:id="@+id/radioGroup">
+
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="通年"
+                android:id="@+id/radioButton"
+                android:layout_weight="1"
+                android:gravity="center" />
+
+            <View style="@style/vr"></View>
+
+
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="前期"
+                android:id="@+id/radioButton2"
+                android:layout_weight="1"
+                android:gravity="center" />
+
+            <View style="@style/vr"></View>
+
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="後期"
+                android:id="@+id/radioButton3"
+                android:layout_weight="1"
+                android:gravity="center" />
+        </RadioGroup>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -34,7 +71,7 @@
 
             <TextView
                 style="@style/td_detail"
-                android:text="最大値"
+                android:text="満点"
                 android:id="@+id/textView7" />
         </LinearLayout>
 

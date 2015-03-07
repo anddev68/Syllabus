@@ -62,8 +62,16 @@
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">1dp</item>
         <item name="android:background">#000000</item>
+    </style>
+
+    <!-- 縦線 -->
+    <style name="vr">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:background">#000000</item>
 
     </style>
+
 
     <!-- 画像ボタン用外枠 -->
     <style name="navbutton_layout">
