@@ -52,6 +52,7 @@ public class SubjectListActivity extends Activity {
     private String _depart;
     private SharedPreferences _pref;
 
+    public static final int REQUEST_CODE_PREF = 0;
 
     TextView textView2;
     ListView listView;
@@ -74,17 +75,17 @@ public class SubjectListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subject_list);
 
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-
         //  設定画面を開くかどうかのチェックを行う
         if(configCheck()){
             openConfigActivity();
             return;
         }
+
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
 
         //  設定値を取得
         _pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -120,6 +121,33 @@ public class SubjectListActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode){
+            case REQUEST_CODE_PREF:
+                switch(resultCode){
+                    case SubjectListActivity.RESULT_CANCELED:
+                        if(configCheck()) finish(); //  初期状態で何もせず戻るボタンを押した場合は終了させる
+                        return;
+                    case SubjectListActivity.RESULT_FIRST_USER:
+                        //  スタートアップガイドを開く
+                        //  fixme:boot_flagを書き換えることで擬似的にガイドを開いている
+                        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("first_boot",true).commit();
+                        Intent intent = new Intent(this,StartupActivity.class);
+                        startActivity(intent);
+                        finish();
+                        return;
+                }
+            break;
+        }
+
+
+
+    }
+
 
     /**
      * 設定のチェック
@@ -372,7 +400,7 @@ public class SubjectListActivity extends Activity {
      */
     private void openConfigActivity(){
         Intent intent = new Intent(this,PrefActivity.class);
-        this.startActivity(intent);
+        this.startActivityForResult(intent,REQUEST_CODE_PREF);
     }
 
     /**

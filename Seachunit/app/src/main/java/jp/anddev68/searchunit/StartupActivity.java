@@ -144,7 +144,9 @@ public class StartupActivity extends Activity implements ViewSwitcher.ViewFactor
     private void showPrevious(){
         position -= 1;
         if (position < 0) {
+            position+=1;
             //  position = images.length - 1;
+            return;
         }
         //imageSwitcher.setInAnimation(inFromLeftAnimation);
         //imageSwitcher.setOutAnimation(outToRightAnimation);

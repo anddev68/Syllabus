@@ -112,17 +112,14 @@ public class PrefActivity extends PreferenceActivity{
         });
 
         _guideButton = findPreference("guide");
-        /*
         _guideButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent()
-                startActivity(intent);
-
+                setResult(SubjectListActivity.RESULT_FIRST_USER);
+                finish();
                 return true;
             }
         });
-        */
 
         //  サマリーを変更
         setSummary();
