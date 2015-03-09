@@ -5,11 +5,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +29,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
+
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -38,7 +44,7 @@ import jp.anddev68.searchunit.structure.Subject;
 	教科一覧のアクティビティー
 */
 
-public class SubjectListActivity extends Activity {
+public class SubjectListActivity extends ActionBarActivity {
 
     private static final int MODE_POINT = 1;    //  点数表示モード
     private static final int MODE_REGISTER = 2;   //  点数登録モード
@@ -54,7 +60,6 @@ public class SubjectListActivity extends Activity {
 
     public static final int REQUEST_CODE_PREF = 0;
 
-    TextView textView2;
     ListView listView;
     LinearLayout[] buttonLayouts;   //  擬似ボタン
     LinearLayout rootView;
@@ -69,11 +74,32 @@ public class SubjectListActivity extends Activity {
 
     ArrayAdapter<String> adapter;
 
+    //  ウィジェット
+    PagerSlidingTabStrip tabs;
+    ViewPager viewPager;
+    Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subject_list);
+
+        //  ツールバーのセット
+        toolbar = (Toolbar) findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
+
+
+        //  タブのバインディング
+        tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager.setAdapter(new MainPageAdapter(this));
+        tabs.setTextColor(Color.WHITE);
+        tabs.setIndicatorColor(Color.WHITE);
+        tabs.setViewPager(viewPager);
+        tabs.setDividerPadding(4);  //  4dp dividerを上に設定
+        tabs.setIndicatorHeight(10);
+        tabs.setTypeface(Typeface.SANS_SERIF, 0);
 
         //  設定画面を開くかどうかのチェックを行う
         if(configCheck()){
@@ -100,6 +126,11 @@ public class SubjectListActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        //  メニュー作成
+
+
+
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_subject_list, menu);
         return true;
@@ -112,12 +143,14 @@ public class SubjectListActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        /*
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this,PrefActivity.class);
             this.startActivity(intent);
             return true;
         }
+        */
 
         return super.onOptionsItemSelected(item);
     }
@@ -176,7 +209,6 @@ public class SubjectListActivity extends Activity {
         String depart = pref.getString("depart","");
 
         //  ウィジェットの取得
-        textView2 = (TextView) findViewById(R.id.textView2);
         listView = (ListView) findViewById(R.id.subject_list);
         rootView =(LinearLayout) findViewById(R.id.root);
         configText = (TextView) findViewById(R.id.system_mes);
@@ -370,23 +402,18 @@ public class SubjectListActivity extends Activity {
 
         switch(_mode) {
             case MODE_POINT:
-                textView2.setText("教科一覧[点数表示]");
-                textView2.setBackgroundResource(R.drawable.btn039_01);
                 rootView.setBackgroundResource(R.drawable.repeat_bg100_01);
                 buttonLayouts[0].setClickable(false);
                 buttonLayouts[0].setBackgroundColor(SELECT_COLOR);
                 break;
             case MODE_REGISTER:
-                textView2.setText("教科一覧[点数登録]");
-                //textView2.setBackgroundColor(Color.rgb(0,200,0));
-                textView2.setBackgroundResource(R.drawable.btn039_04);
+
                 rootView.setBackgroundResource(R.drawable.repeat_bg100_04);
                 buttonLayouts[1].setBackgroundColor(SELECT_COLOR);
                 buttonLayouts[1].setClickable(false);
                 break;
             case MODE_SYLLABUS:
-                textView2.setText("教科一覧[シラバス]");
-                textView2.setBackgroundResource(R.drawable.btn039_05);
+
                 rootView.setBackgroundResource(R.drawable.repeat_bg100_05);
                 buttonLayouts[2].setBackgroundColor(SELECT_COLOR);
                 buttonLayouts[2].setClickable(false);

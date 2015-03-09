@@ -3,18 +3,36 @@
     android:layout_height="match_parent"
     tools:context=".SubjectListActivity"
     android:orientation="vertical"
-    android:background="@drawable/repeat_bg100_01"
+    android:background="?attr/colorPrimary"
     android:id="@+id/root">
 
-
-    <TextView
-        android:text="教科一覧"
-        android:id="@+id/textView2"
-        android:background="@drawable/btn039_01"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/header"
-        android:gravity="center" />
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary">
+
+    </android.support.v7.widget.Toolbar>
+
+
+    <com.astuetz.PagerSlidingTabStrip
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary">
+
+    </com.astuetz.PagerSlidingTabStrip>
+
+
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/viewPager">
+
+    </android.support.v4.view.ViewPager>
 
     <ListView
         android:layout_width="fill_parent"
