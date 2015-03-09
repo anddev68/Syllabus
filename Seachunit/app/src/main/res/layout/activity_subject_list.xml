@@ -12,27 +12,9 @@
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary">
+        android:background="#b8860b">
 
     </android.support.v7.widget.Toolbar>
-
-
-    <com.astuetz.PagerSlidingTabStrip
-        android:id="@+id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary">
-
-    </com.astuetz.PagerSlidingTabStrip>
-
-
-
-    <android.support.v4.view.ViewPager
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/viewPager">
-
-    </android.support.v4.view.ViewPager>
 
     <ListView
         android:layout_width="fill_parent"
@@ -40,75 +22,6 @@
         android:id="@+id/subject_list"
         android:layout_weight="1"
         android:dividerHeight="1sp"
-        android:divider="#999999" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="現在の設定："
-        android:id="@+id/system_mes"
-        android:background="#dddddd" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="#cc999999">
-
-        <LinearLayout
-            style="@style/navbutton_layout"
-            android:id="@+id/lbutton1">
-
-            <ImageView
-                style="@style/navbutton_image"
-                android:src="@android:drawable/ic_menu_info_details" />
-
-            <TextView
-                style="@style/navbutton_text"
-                android:text="詳細表示" />
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/navbutton_layout"
-            android:id="@+id/lbutton2">
-
-            <ImageView
-                style="@style/navbutton_image"
-                android:src="@android:drawable/ic_menu_edit" />
-
-            <TextView
-                style="@style/navbutton_text"
-                android:text="点数編集" />
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/navbutton_layout"
-            android:id="@+id/lbutton3">
-
-            <ImageView
-                style="@style/navbutton_image"
-                android:src="@android:drawable/ic_menu_gallery" />
-
-            <TextView
-                style="@style/navbutton_text"
-                android:text="シラバス" />
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/navbutton_layout"
-            android:id="@+id/lbutton4">
-
-            <ImageView
-                style="@style/navbutton_image"
-                android:src="@android:drawable/ic_menu_manage" />
-
-            <TextView
-                style="@style/navbutton_text"
-                android:text="設定" />
-        </LinearLayout>
-
-
-    </LinearLayout>
+        android:divider="#708090" />
 
 </LinearLayout>

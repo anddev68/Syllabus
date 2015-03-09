@@ -23,7 +23,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:21.0.2'
     compile 'com.android.support:support-v4:21.0.2'
-    compile 'com.jpardogo.materialtabstrip:library:1.0.6'
+    compile 'com.github.fengdai:alertdialogpro-theme-material:0.2.1'
 }
 
 

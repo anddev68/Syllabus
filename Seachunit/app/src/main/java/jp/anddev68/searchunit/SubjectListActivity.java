@@ -1,16 +1,12 @@
 package jp.anddev68.searchunit;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.net.Uri;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -18,8 +14,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -27,18 +21,17 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.astuetz.PagerSlidingTabStrip;
+
+import com.alertdialogpro.AlertDialogPro;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import jp.anddev68.searchunit.database.DatabaseAccessor;
 import jp.anddev68.searchunit.database.DatabaseHelper;
 import jp.anddev68.searchunit.parser.AbstractParser;
 import jp.anddev68.searchunit.parser.GnctParser;
-import jp.anddev68.searchunit.structure.Subject;
+
 
 /**
 	教科一覧のアクティビティー
@@ -46,12 +39,6 @@ import jp.anddev68.searchunit.structure.Subject;
 
 public class SubjectListActivity extends ActionBarActivity {
 
-    private static final int MODE_POINT = 1;    //  点数表示モード
-    private static final int MODE_REGISTER = 2;   //  点数登録モード
-    private static final int MODE_SYLLABUS = 3;     //  シラバス閲覧モード
-    private static final int NON_SELECT_COLOR = Color.rgb(0x99,0x99,0x99);
-    private static final int SELECT_COLOR = Color.rgb(0x55,0x55,0x55);
-    private int _mode;
 
     private String _grade;
     private boolean _plusGMode;  //  一般科追加モード
@@ -61,9 +48,7 @@ public class SubjectListActivity extends ActionBarActivity {
     public static final int REQUEST_CODE_PREF = 0;
 
     ListView listView;
-    LinearLayout[] buttonLayouts;   //  擬似ボタン
     LinearLayout rootView;
-    TextView configText;
 
 
 
@@ -75,9 +60,14 @@ public class SubjectListActivity extends ActionBarActivity {
     ArrayAdapter<String> adapter;
 
     //  ウィジェット
-    PagerSlidingTabStrip tabs;
-    ViewPager viewPager;
     Toolbar toolbar;
+
+    // 選択されたものを一時的に保存しておく
+    private String _tmpGrade;
+    private String _tmpDepart;
+    private int _tmpMode;
+    private int _tmpSubjectId;
+    private String _tmpSubjectName;
 
 
     @Override
@@ -88,18 +78,8 @@ public class SubjectListActivity extends ActionBarActivity {
         //  ツールバーのセット
         toolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("教科リスト:4EE");
 
-
-        //  タブのバインディング
-        tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
-        viewPager.setAdapter(new MainPageAdapter(this));
-        tabs.setTextColor(Color.WHITE);
-        tabs.setIndicatorColor(Color.WHITE);
-        tabs.setViewPager(viewPager);
-        tabs.setDividerPadding(4);  //  4dp dividerを上に設定
-        tabs.setIndicatorHeight(10);
-        tabs.setTypeface(Typeface.SANS_SERIF, 0);
 
         //  設定画面を開くかどうかのチェックを行う
         if(configCheck()){
@@ -127,8 +107,6 @@ public class SubjectListActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //  メニュー作成
-
-
 
 
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -211,22 +189,6 @@ public class SubjectListActivity extends ActionBarActivity {
         //  ウィジェットの取得
         listView = (ListView) findViewById(R.id.subject_list);
         rootView =(LinearLayout) findViewById(R.id.root);
-        configText = (TextView) findViewById(R.id.system_mes);
-
-        configText.setText("現在の設定:"+_grade+_depart+(_plusGMode?" +一般科":""));
-
-        buttonLayouts = new LinearLayout[4];
-        buttonLayouts[0] = (LinearLayout) findViewById(R.id.lbutton1);
-        buttonLayouts[1] = (LinearLayout) findViewById(R.id.lbutton2);
-        buttonLayouts[2] = (LinearLayout) findViewById(R.id.lbutton3);
-        buttonLayouts[3] = (LinearLayout) findViewById(R.id.lbutton4);
-        LinearLayout.OnClickListener listener = new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                SubjectListActivity.this.onClickLButton(v);
-            }
-        };
-        for(int i=0; i<buttonLayouts.length; i++) buttonLayouts[i].setOnClickListener(listener);
 
         //  アダプター初期化
         adapter = new ArrayAdapter<String>(this,R.layout.custom_list_item1);
@@ -238,9 +200,7 @@ public class SubjectListActivity extends ActionBarActivity {
         });
         listView.setAdapter(adapter);
 
-        //  初期モードをセットする
-        _mode = MODE_POINT; //  点数表示モード
-        setModeDisplay();
+
 
         //  データを取得する
         AbstractParser parser = new GnctParser();
@@ -300,7 +260,8 @@ public class SubjectListActivity extends ActionBarActivity {
      * 教科リストがクリックされたとき
      * クリックされたTextViewを取得する
      *
-     * 現在のモード別に起動するアクティビティーを変更する
+     * 点数を編集するor点数を登録するorシラバスを開くの
+     * 選択ダイアログを開く
      */
     private void onListView1ItemClick(AdapterView<?> parent,View view,int position,long id){
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -317,56 +278,50 @@ public class SubjectListActivity extends ActionBarActivity {
             depart = "ALL";
         }
 
-        switch(_mode){
-            case MODE_SYLLABUS:
-                String url = getTopUrl(depart,null);
-                String code = DatabaseAccessor.getSyllabusCode(db,subjectId,null);
+        //  アクティビティーに渡すパラメータを設定する
+        _tmpGrade = grade;
+        _tmpDepart = depart;
+        _tmpSubjectId = subjectId;
+        _tmpSubjectName = subjectName;
 
-                String abs_path = url.substring(0,url.lastIndexOf('/'))+"/";    //  URLを絶対パスに変換
-                abs_path = abs_path+code+".pdf";
-                openPdf(abs_path);   //  シラバスを開く
+        //  アクション選択ウインドウを開く
+        String[] selects = {"点数表示","点数編集","シラバス"};
+        final AlertDialogPro dialog = new AlertDialogPro.Builder(this,R.style.Theme_AlertDialogPro_Material)
+            .setTitle("Select Action...")
+            .setItems(selects, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    _tmpMode = which;
+                    onSelectedDialogRadioButton();
+                    dialog.dismiss();
+                }
+            })
+            .setNegativeButton("Cancel",null)
+            .create();
 
-                //Toast.makeText(this,code,Toast.LENGTH_SHORT).show();
-                break;
-            case MODE_POINT:    //  点数詳細画面
-                openDetailActivity(subjectId,subjectName);
-                break;
-            case MODE_REGISTER:
-                //  Toast.makeText(this,"No Implemented",Toast.LENGTH_SHORT).show();
-                openRegistActivity(subjectId,subjectName);
-                break;
+        dialog.show();
 
-
-        }
         db.close();
-
-
     }
 
 
     /**
-     * ボタンが押された時
-     * モード切り替えor設定メニューの表示
+     * ダイアログ上に配置されたボタンを押した時に開かれるダイアログを選択する
      */
-    private void onClickLButton(View v){
-        switch(v.getId()){
-            case R.id.lbutton1:
-                _mode = MODE_POINT;
-                setModeDisplay();
-                break;
-            case R.id.lbutton2:
-                _mode = MODE_REGISTER;
-                setModeDisplay();
-                break;
-            case R.id.lbutton3:
-                _mode = MODE_SYLLABUS;
-                setModeDisplay();
-                break;
-            case R.id.lbutton4:
-                openConfigActivity();
-                break;
+    private void onSelectedDialogRadioButton(){
+        switch(_tmpMode){
+            case 0:
+                openDetailActivity(_tmpSubjectId,_tmpSubjectName);
+                return;
+            case 1:
+                openRegistActivity(_tmpSubjectId,_tmpSubjectName);
+                return;
+
+            case 2:
+                return;
         }
     }
+
 
 
 
@@ -389,37 +344,7 @@ public class SubjectListActivity extends ActionBarActivity {
     }
 
 
-    /**
-     * モードに応じて表示する色を変える
-     * あとクリックラブルを外す
-     */
-    private void setModeDisplay(){
-        for(int i=0; i<buttonLayouts.length; i++){
-            buttonLayouts[i].setBackgroundColor(NON_SELECT_COLOR);
-            buttonLayouts[i].setClickable(true);
-        }
 
-
-        switch(_mode) {
-            case MODE_POINT:
-                rootView.setBackgroundResource(R.drawable.repeat_bg100_01);
-                buttonLayouts[0].setClickable(false);
-                buttonLayouts[0].setBackgroundColor(SELECT_COLOR);
-                break;
-            case MODE_REGISTER:
-
-                rootView.setBackgroundResource(R.drawable.repeat_bg100_04);
-                buttonLayouts[1].setBackgroundColor(SELECT_COLOR);
-                buttonLayouts[1].setClickable(false);
-                break;
-            case MODE_SYLLABUS:
-
-                rootView.setBackgroundResource(R.drawable.repeat_bg100_05);
-                buttonLayouts[2].setBackgroundColor(SELECT_COLOR);
-                buttonLayouts[2].setClickable(false);
-                break;
-        }
-    }
 
 
     /**
