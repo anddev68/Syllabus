@@ -63,12 +63,10 @@ public class SubjectListActivity extends ActionBarActivity {
     Toolbar toolbar;
 
     // 選択されたものを一時的に保存しておく
-    private String _tmpGrade;
-    private String _tmpDepart;
     private int _tmpMode;
     private int _tmpSubjectId;
     private String _tmpSubjectName;
-
+    private String _tmpUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +106,6 @@ public class SubjectListActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         //  メニュー作成
 
-
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_subject_list, menu);
         return true;
@@ -121,14 +118,13 @@ public class SubjectListActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        /*
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this,PrefActivity.class);
             this.startActivity(intent);
             return true;
         }
-        */
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -271,6 +267,11 @@ public class SubjectListActivity extends ActionBarActivity {
         String depart = pref.getString("depart",null);
         String grade = pref.getString("grade",null);
         int subjectId = DatabaseAccessor.getSubjectId(db,subjectName,grade,depart,-1);
+        String url = getTopUrl(depart,null);
+        String code = DatabaseAccessor.getSyllabusCode(db,subjectId,null);
+        String abs_path = url.substring(0,url.lastIndexOf('/'))+"/";    //  URLを絶対パスに変換
+        abs_path = abs_path+code+".pdf";
+        _tmpUrl = abs_path;
 
         //  専門科に該当教科がない場合については一般科として扱う
         if(subjectId==-1&&_plusGMode){
@@ -279,15 +280,13 @@ public class SubjectListActivity extends ActionBarActivity {
         }
 
         //  アクティビティーに渡すパラメータを設定する
-        _tmpGrade = grade;
-        _tmpDepart = depart;
         _tmpSubjectId = subjectId;
         _tmpSubjectName = subjectName;
 
         //  アクション選択ウインドウを開く
-        String[] selects = {"点数表示","点数編集","シラバス"};
+        String[] selects = {"点数を表示する","点数を編集する","シラバスを開く"};
         final AlertDialogPro dialog = new AlertDialogPro.Builder(this,R.style.Theme_AlertDialogPro_Material)
-            .setTitle("Select Action...")
+            .setTitle(_tmpSubjectName)
             .setItems(selects, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -316,8 +315,8 @@ public class SubjectListActivity extends ActionBarActivity {
             case 1:
                 openRegistActivity(_tmpSubjectId,_tmpSubjectName);
                 return;
-
             case 2:
+                openPdf(_tmpUrl);   //  シラバスを開く
                 return;
         }
     }
@@ -342,7 +341,6 @@ public class SubjectListActivity extends ActionBarActivity {
         }
         return url;
     }
-
 
 
 

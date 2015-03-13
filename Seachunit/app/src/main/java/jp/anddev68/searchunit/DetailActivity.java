@@ -1,6 +1,7 @@
 package jp.anddev68.searchunit;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -8,7 +9,12 @@ import android.graphics.BitmapFactory;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
@@ -35,7 +41,7 @@ import jp.anddev68.searchunit.database.DatabaseHelper;
  *
  * Created by hideki on 2014/12/11.
  */
-public class DetailActivity extends Activity implements View.OnClickListener{
+public class DetailActivity extends ActionBarActivity implements View.OnClickListener{
 
     String subjectName;
     int subjectId;
@@ -50,6 +56,11 @@ public class DetailActivity extends Activity implements View.OnClickListener{
     int[] points;   //  点数データ
 
 
+    //  widget
+    Toolbar toolbar;
+    DrawerLayout drawerLayout;
+    ActionBarDrawerToggle drawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +70,20 @@ public class DetailActivity extends Activity implements View.OnClickListener{
         subjectId = getIntent().getIntExtra("subject_id",-1);
 
         setContentView(R.layout.activity_detail);
+
+        //  findView
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        toolbar = (Toolbar) findViewById(R.id.toolBar);
+
+        //  ツールバーの設定
+        toolbar.setNavigationIcon(R.drawable.icon);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(subjectName);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        //  Actionbarの設定
+        setupActionBar();
 
         setupWidget();
 
@@ -74,8 +99,7 @@ public class DetailActivity extends Activity implements View.OnClickListener{
 
 
     private void setupWidget(){
-        subjectTextView = (TextView) findViewById(R.id.subject);
-        subjectTextView.setText(subjectName);
+
         unitTextView = (TextView) findViewById(R.id.unit);
         shortPointView = (TextView) findViewById(R.id.textView10);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -278,10 +302,50 @@ public class DetailActivity extends Activity implements View.OnClickListener{
     }
 
 
-
     private TextView findTextView(int id){
         return (TextView) findViewById(id);
     }
+
+
+
+
+
+    /**
+     * ActionBarの設定
+     */
+    private void setupActionBar(){
+        drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.drawable.ic_launcher,R.string.drawer_close){
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                Log.i("DA", "onDrawerClosed");
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                Log.i("DA", "onDrawerOpened");
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                super.onDrawerStateChanged(newState);
+            }
+        };
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerLayout.setDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+
+
+
+
+    }
+
+
 
 
 }

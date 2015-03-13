@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/drawerLayout">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="70dp"
-            android:text="教科名"
-            android:id="@+id/subject"
-            android:gravity="center"
-            android:textSize="30dp" />
+        <include layout="@layout/custom_toolbar">
+        </include>
 
         <RadioGroup
             android:orientation="horizontal"
@@ -247,8 +244,21 @@
                 android:id="@+id/textView11"
                 android:gravity="right" />
         </LinearLayout>
-
-
     </LinearLayout>
 
-</RelativeLayout>
+    <!-- The navigation drawer -->
+    <LinearLayout
+        android:id="@+id/left_drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:background="#333" >
+        <Button
+            android:id="@+id/drawer_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="drawer button" />
+    </LinearLayout>
+
+
+</android.support.v4.widget.DrawerLayout>
