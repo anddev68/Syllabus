@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <PreferenceCategory android:title="設定">
+
+        <ListPreference
+            android:key="depart"
+            android:title="学科"
+            android:entries="@array/depart_entry"
+            android:entryValues="@array/depart_entryValues"
+            android:summary="所属する学科を選択してください"
+            android:dialogTitle="学年を選択" />
+
+        <ListPreference
+            android:key="grade"
+            android:entries="@array/grade_entry"
+            android:entryValues="@array/grade_entryValues"
+            android:title="学年"
+            android:summary="所属する学年を選択してください"
+            android:dialogTitle="学年を選択" />
+
+        <CheckBoxPreference
+            android:key="plusG"
+            android:title="一般科plusモード"
+            android:summary="選択した科＋一般科で表示します"
+            android:checked="false" />
+
+        <Preference
+            android:key="guide"
+            android:title="使い方"
+            android:summary="スタートアップガイドを開きます" />
+
+
+        <Preference
+            android:key="export"
+            android:title="点数データのエクスポート"
+            android:summary="未実装" />
+
+        <Preference
+            android:key="dlPoint"
+            android:title="点数データの消去"
+            android:summary="未実装" />
+
+        <Preference
+            android:key="dlSubject"
+            android:title="教科とシラバスデータの消去"
+            android:summary="新学期や動作不安定時に使ってください" />
+
+        <Preference
+            android:key="osp"
+            android:title="オープンソースプロジェクト"
+            android:summary="This software is under the Apache License2.0" />
+
+    </PreferenceCategory>
+</PreferenceScreen><!-- From: file:/home/anddev68/Syllabus/Seachunit/app/src/main/res/xml/pref.xml -->

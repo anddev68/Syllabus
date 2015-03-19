@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bitmap
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/bg100_04"
+    android:tileMode="repeat" /><!-- From: file:/home/anddev68/Syllabus/Seachunit/app/src/main/res/drawable-mdpi/repeat_bg100_04.xml -->

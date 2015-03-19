@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/custom_toolbar">
+
+    </include>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="選択してください..."
+        android:id="@+id/textView"
+        android:drawableRight="@android:drawable/ic_menu_more"
+        android:background="#cccccc"
+        android:clickable="true"
+        android:onClick="onClickSelectLabel" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/textView8"
+        android:textColor="#000000"
+        android:background="@drawable/bnr012_04"
+        android:gravity="bottom|right"
+        android:textSize="50dp"
+        android:typeface="sans"
+        android:textStyle="italic" />
+
+    <include
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/input_number_layout" />
+
+
+</LinearLayout><!-- From: file:/home/anddev68/Syllabus/Seachunit/app/src/main/res/layout/activity_regist.xml -->

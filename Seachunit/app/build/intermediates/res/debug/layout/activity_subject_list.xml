@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SubjectListActivity"
+    android:orientation="vertical"
+    android:background="?attr/colorPrimary"
+    android:id="@+id/root">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:minHeight="?attr/actionBarSize"
+        android:background="#b8860b">
+
+    </android.support.v7.widget.Toolbar>
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/subject_list"
+        android:layout_weight="1"
+        android:dividerHeight="1sp"
+        android:divider="#708090" />
+
+</LinearLayout>
+<!-- From: file:/home/anddev68/Syllabus/Seachunit/app/src/main/res/layout/activity_subject_list.xml -->

@@ -1,0 +1,8 @@
+/home/anddev68/Syllabus/Seachunit/app/build/intermediates/classes/debug
+/home/anddev68/Syllabus/Seachunit/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.2-5e3434b901b7d229c4cc925dccb79cbcaab6a2e2.jar
+/home/anddev68/Syllabus/Seachunit/app/build/intermediates/pre-dexed/debug/classes-53504d6f010f38de7a31bbcf37914dd311456367.jar
+/home/anddev68/Syllabus/Seachunit/app/build/intermediates/pre-dexed/debug/classes-ff9d6d4ab30e911826e14e0547078ff4ce01d848.jar
+/home/anddev68/Syllabus/Seachunit/app/build/intermediates/pre-dexed/debug/library-2.4.0-b4e7f2bdf79892fe68f8da68842f1fdd2eccfa7d.jar
+/home/anddev68/Syllabus/Seachunit/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-d424c9f1f9dfdea9a7dbd178a538cf451a2994c2.jar
+/home/anddev68/Syllabus/Seachunit/app/build/intermediates/pre-dexed/debug/classes-44cbbea2231756ee29ea37124e8b941a102475e6.jar
+/home/anddev68/Syllabus/Seachunit/app/build/intermediates/pre-dexed/debug/classes-dc0f74be3e7182e198f9a61a69e4e043c263e99c.jar

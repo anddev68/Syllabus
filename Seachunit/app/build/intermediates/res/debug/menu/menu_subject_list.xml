@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".SubjectListActivity">
+
+    <item android:title="settings"
+        android:id="@+id/action_settings" >
+
+    </item>
+
+
+
+
+</menu>
+<!-- From: file:/home/anddev68/Syllabus/Seachunit/app/src/main/res/menu/menu_subject_list.xml -->

@@ -1,0 +1,10 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:gravity="center_vertical"
+    android:paddingLeft="6dip"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:typeface="sans"
+    android:textColor="#ffffff"/><!-- From: file:/home/anddev68/Syllabus/Seachunit/app/src/main/res/layout/custom_list_item1.xml -->
