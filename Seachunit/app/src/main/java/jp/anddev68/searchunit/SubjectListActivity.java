@@ -27,6 +27,7 @@ import com.alertdialogpro.AlertDialogPro;
 
 import java.util.ArrayList;
 
+import jp.anddev68.searchunit.activities.PrefActivity2;
 import jp.anddev68.searchunit.database.DatabaseAccessor;
 import jp.anddev68.searchunit.database.DatabaseHelper;
 import jp.anddev68.searchunit.parser.AbstractParser;
@@ -73,17 +74,16 @@ public class SubjectListActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subject_list);
 
-        //  ツールバーのセット
-        toolbar = (Toolbar) findViewById(R.id.toolBar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("教科リスト:4EE");
-
-
         //  設定画面を開くかどうかのチェックを行う
         if(configCheck()){
             openConfigActivity();
             return;
         }
+
+
+
+
+
 
     }
 
@@ -99,6 +99,7 @@ public class SubjectListActivity extends ActionBarActivity {
 
 
         setupWidget();
+        setupToolbar();
     }
 
 
@@ -120,8 +121,7 @@ public class SubjectListActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this,PrefActivity.class);
-            this.startActivity(intent);
+            openConfigActivity();
             return true;
         }
 
@@ -228,6 +228,19 @@ public class SubjectListActivity extends ActionBarActivity {
             }
         });
         task.execute("");
+
+    }
+
+    private void setupToolbar(){
+        //  タイトルの取得
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String grade = pref.getString("grade",null);
+        String depart = pref.getString("depart",null);
+
+        //  ツールバーのセット
+        toolbar = (Toolbar) findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("教科リスト:"+grade+depart);
 
     }
 
@@ -349,7 +362,7 @@ public class SubjectListActivity extends ActionBarActivity {
      * 設定画面を開く
      */
     private void openConfigActivity(){
-        Intent intent = new Intent(this,PrefActivity.class);
+        Intent intent = new Intent(this,PrefActivity2.class);
         this.startActivityForResult(intent,REQUEST_CODE_PREF);
     }
 

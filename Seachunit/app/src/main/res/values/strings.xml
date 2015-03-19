@@ -10,6 +10,12 @@
     <string name="drawer_close">close</string>
 
 
+    <string-array name="semester_array">
+        <item>通年</item>
+        <item>前期</item>
+        <item>後期</item>
+    </string-array>
+
     <string-array name="term_array">
         <item>前期中間</item>
         <item>前期中間（満点)</item>

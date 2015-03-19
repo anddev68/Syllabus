@@ -1,28 +1,22 @@
 package jp.anddev68.searchunit;
 
-import android.app.Activity;
-import android.app.Notification;
+
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.http.SslError;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.webkit.SslErrorHandler;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -41,16 +35,14 @@ import jp.anddev68.searchunit.database.DatabaseHelper;
  *
  * Created by hideki on 2014/12/11.
  */
-public class DetailActivity extends ActionBarActivity implements View.OnClickListener{
+public class DetailActivity extends ActionBarActivity implements Toolbar.OnMenuItemClickListener{
 
     String subjectName;
     int subjectId;
 
     TextView[] textViews;    //  点数表示テーブル
     TextView shortPointView;    //  不足点数用
-    TextView subjectTextView;   //  教科名表示
     TextView unitTextView;      //  目標単位数
-    RadioGroup radioGroup;     //  semesterチェック用
 
     SeekBar seekBar;
     int[] points;   //  点数データ
@@ -59,6 +51,7 @@ public class DetailActivity extends ActionBarActivity implements View.OnClickLis
     //  widget
     Toolbar toolbar;
     DrawerLayout drawerLayout;
+    ListView drawerListView;
     ActionBarDrawerToggle drawerToggle;
 
     @Override
@@ -71,20 +64,8 @@ public class DetailActivity extends ActionBarActivity implements View.OnClickLis
 
         setContentView(R.layout.activity_detail);
 
-        //  findView
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        toolbar = (Toolbar) findViewById(R.id.toolBar);
-
-        //  ツールバーの設定
-        toolbar.setNavigationIcon(R.drawable.icon);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(subjectName);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        //  Actionbarの設定
+        findViews();
         setupActionBar();
-
         setupWidget();
 
     }
@@ -96,44 +77,35 @@ public class DetailActivity extends ActionBarActivity implements View.OnClickLis
         setupWidget();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        Toast.makeText(this,"PRESS:"+item.getTitle(),Toast.LENGTH_SHORT).show();
 
 
-    private void setupWidget(){
 
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        Toast.makeText(this,"PRESS:"+item.getTitle(),Toast.LENGTH_SHORT).show();
+
+        return true;
+    }
+
+
+    private void findViews(){
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        drawerListView = (ListView) findViewById(R.id.drawerListView);
+        toolbar = (Toolbar) findViewById(R.id.toolBar);
         unitTextView = (TextView) findViewById(R.id.unit);
         shortPointView = (TextView) findViewById(R.id.textView10);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
-
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                unitTextView.setText(""+progress);
-                //  不足点数をセットする
-               setShortPointView(getShortPoint(progress));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                onChangeRadioButton(checkedId);
-            }
-        });
-
-
-
-
         textViews = new TextView[10];
         textViews[0] = (TextView) findViewById(R.id.text0_1);
         textViews[1] = (TextView) findViewById(R.id.text0_2);
@@ -145,14 +117,21 @@ public class DetailActivity extends ActionBarActivity implements View.OnClickLis
         textViews[7] = (TextView) findViewById(R.id.text3_2);
         textViews[8] = (TextView) findViewById(R.id.text4_1);
         textViews[9] = (TextView) findViewById(R.id.text4_2);
+    }
+
+    private void setupWidget(){
+
+        seekBar.setOnSeekBarChangeListener(new UnitSeekBarChangeListener());
+        drawerListView.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,new String[]{"通年","前期","後期"}));
+        drawerListView.setOnItemClickListener(new DrawerItemClickListener());
 
         DatabaseHelper helper = new DatabaseHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
         points = new int[textViews.length];
 
-
+        PointTextClickListener listener = new PointTextClickListener();
         for(int i=0; i<textViews.length; i++){
-            textViews[i].setOnClickListener(this);
+            textViews[i].setOnClickListener(listener);
 
             //  タームIDはtextViewの添字と一緒
             //  0=中間点数,1=中間max・・・
@@ -168,9 +147,6 @@ public class DetailActivity extends ActionBarActivity implements View.OnClickLis
                 }
             }
 
-
-
-
         }
 
         //  不足点数をセットする
@@ -178,7 +154,18 @@ public class DetailActivity extends ActionBarActivity implements View.OnClickLis
 
     }
 
-
+    private void setupActionBar(){
+        toolbar.setNavigationIcon(R.drawable.icon);
+        toolbar.setOnMenuItemClickListener(this);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(subjectName);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.drawable.ic_launcher,R.string.drawer_close);
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerLayout.setDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+    }
 
 
 
@@ -196,15 +183,7 @@ public class DetailActivity extends ActionBarActivity implements View.OnClickLis
     }
 
 
-    @Override
-    public void onClick(View v) {
-        for(int i=0; i<textViews.length; i++){
-            if( textViews[i].getId() == v.getId() ){
-                openRegisterActivity(i);
-                return;
-            }
-        }
-    }
+
 
 
     /**
@@ -252,6 +231,7 @@ public class DetailActivity extends ActionBarActivity implements View.OnClickLis
     /**
      *
      */
+    /*
     private void onChangeRadioButton(int id){
         switch(id){
             case R.id.radioButton:
@@ -267,6 +247,7 @@ public class DetailActivity extends ActionBarActivity implements View.OnClickLis
 
         }
     }
+    */
 
 
     /**
@@ -302,50 +283,69 @@ public class DetailActivity extends ActionBarActivity implements View.OnClickLis
     }
 
 
+
+
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener{
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            String str = ((TextView)view).getText().toString();
+            Log.d("ItemClick",str);
+            switch(str){
+                case "通年":
+                    changeSemester(0);
+                    break;
+                case "前期":
+                    changeSemester(1);
+                    break;
+                case "後期":
+                    changeSemester(2);
+                    break;
+            }
+            drawerLayout.closeDrawers();
+        }
+    }
+
+    private class PointTextClickListener implements TextView.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            for(int i=0; i<textViews.length; i++){
+                if( textViews[i].getId() == v.getId() ){
+                    openRegisterActivity(i);
+                    return;
+                }
+            }
+        }
+    }
+
+    private class UnitSeekBarChangeListener implements SeekBar.OnSeekBarChangeListener{
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            unitTextView.setText(""+progress);
+            //  不足点数をセットする
+            setShortPointView(getShortPoint(progress));
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    }
+
+
+
+
+
     private TextView findTextView(int id){
         return (TextView) findViewById(id);
     }
-
-
-
-
-
-    /**
-     * ActionBarの設定
-     */
-    private void setupActionBar(){
-        drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.drawable.ic_launcher,R.string.drawer_close){
-
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                Log.i("DA", "onDrawerClosed");
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                Log.i("DA", "onDrawerOpened");
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-                super.onDrawerStateChanged(newState);
-            }
-        };
-        drawerToggle.setDrawerIndicatorEnabled(true);
-        drawerLayout.setDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-
-
-
-
-    }
-
-
 
 
 }

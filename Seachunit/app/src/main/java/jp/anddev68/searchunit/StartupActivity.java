@@ -65,9 +65,11 @@ public class StartupActivity extends Activity implements ViewSwitcher.ViewFactor
         setContentView(R.layout.activity_start);
 
         pref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean result = pref.getBoolean("first_boot",true);
+
 
         //  ����N���`�F�b�N
-        if( !pref.getBoolean("first_boot",true) ){
+        if( !result ){
             //  2��ڈȍ~�͋N�����Ȃ�
             startActivity(new Intent(this,SubjectListActivity.class));
             finish();

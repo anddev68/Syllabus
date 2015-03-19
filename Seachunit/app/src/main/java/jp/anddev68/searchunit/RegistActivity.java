@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,19 +29,20 @@ import jp.anddev68.searchunit.database.DatabaseHelper;
  *
  * Created by hideki on 2014/12/21.
  */
-public class RegistActivity extends Activity{
+public class RegistActivity extends ActionBarActivity {
 
     String subjectName;
     int subjectId;
     int termId;
 
 
-    TextView subjectNameView;
     TextView termView;
     TextView numberView;
 
     String[] termArray;
 
+
+    Toolbar toolBar;
 
 
     @Override
@@ -58,17 +63,36 @@ public class RegistActivity extends Activity{
          */
         termArray = getResources().getStringArray(R.array.term_array);
 
-
+        findViews();
+        setupToolBar();
         setupWidget();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //  戻るボタン
+        if (id == android.R.id.home) {
+            setResult(SubjectListActivity.RESULT_CANCELED);
+            finish();
+            return true;
+        }
+
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
     private void setupWidget(){
-        subjectNameView = (TextView) findViewById(R.id.textView5);
         termView = (TextView) findViewById(R.id.textView);
         numberView = (TextView) findViewById(R.id.textView8);
 
         //  初期値を設定
-        if(subjectName!=null) subjectNameView.setText(subjectName);
         if(termId!=-1) termView.setText(termArray[termId]);
 
     }
@@ -81,7 +105,14 @@ public class RegistActivity extends Activity{
         SQLiteDatabase db = helper.getWritableDatabase();
 
         int index = indexOf(termView.getText().toString());   //  termid
-        int value = Integer.parseInt(numberView.getText().toString());  //  value
+
+        int value = 0;
+        try {
+            value = Integer.parseInt(numberView.getText().toString());  //  value
+        }catch(Exception e){
+            Toast.makeText(this,"値が不正です",Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if(index==-1){
             Toast.makeText(this,"学期を選択してください",Toast.LENGTH_SHORT).show();
@@ -129,7 +160,23 @@ public class RegistActivity extends Activity{
 
 
     public void onClickDelete(View v){
-        numberView.setText( numberView.getText().subSequence(0,numberView.getText().length()-1) );
+        if(numberView.getText().length()>0)
+            numberView.setText( numberView.getText().subSequence(0,numberView.getText().length()-1) );
+        else
+            Toast.makeText(this,"値が空です。",Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void findViews(){
+        toolBar = (Toolbar) findViewById(R.id.toolBar);
+    }
+
+
+    private void setupToolBar(){
+        setSupportActionBar(toolBar);
+        getSupportActionBar().setTitle(subjectName);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
 

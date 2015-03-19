@@ -14,43 +14,6 @@
         <include layout="@layout/custom_toolbar">
         </include>
 
-        <RadioGroup
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:focusableInTouchMode="false"
-            android:id="@+id/radioGroup">
-
-            <RadioButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="通年"
-                android:id="@+id/radioButton"
-                android:layout_weight="1"
-                android:gravity="center" />
-
-            <View style="@style/vr"></View>
-
-
-            <RadioButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="前期"
-                android:id="@+id/radioButton2"
-                android:layout_weight="1"
-                android:gravity="center" />
-
-            <View style="@style/vr"></View>
-
-            <RadioButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="後期"
-                android:id="@+id/radioButton3"
-                android:layout_weight="1"
-                android:gravity="center" />
-        </RadioGroup>
-
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
@@ -252,12 +215,15 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="left"
+        android:orientation="vertical"
         android:background="#333" >
-        <Button
-            android:id="@+id/drawer_button"
+
+        <ListView
+            android:id="@+id/drawerListView"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="drawer button" />
+            android:layout_height="match_parent">
+        </ListView>
+
     </LinearLayout>
 
 
