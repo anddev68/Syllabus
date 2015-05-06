@@ -437,7 +437,7 @@ public final class R {
 		public static final int adp_topPanel = 0x7f0b0018;
 		public static final int always = 0x7f0b002b;
 		public static final int beginning = 0x7f0b0028;
-		public static final int body = 0x7f0b0079;
+		public static final int body = 0x7f0b007a;
 		public static final int checkbox = 0x7f0b003e;
 		public static final int collapseActionView = 0x7f0b002c;
 		public static final int decor_content_parent = 0x7f0b0044;

@@ -4,7 +4,8 @@
     tools:context=".SubjectListActivity"
     android:orientation="vertical"
     android:background="?attr/colorPrimary"
-    android:id="@+id/root">
+    android:id="@+id/root"
+    android:alpha="25">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolBar"
@@ -12,17 +13,33 @@
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         android:minHeight="?attr/actionBarSize"
-        android:background="#b8860b">
+        android:background="#32cd32">
 
     </android.support.v7.widget.Toolbar>
 
-    <ListView
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/subject_list"
-        android:layout_weight="1"
-        android:dividerHeight="1sp"
-        android:divider="#708090" />
+        android:layout_height="fill_parent">
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/imageView2"
+            android:alpha="255"
+            android:scaleType="fitCenter"
+            android:background="@drawable/bg1"
+            android:adjustViewBounds="false" />
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/subject_list"
+            android:layout_weight="1"
+            android:dividerHeight="1sp"
+            android:divider="#708090"
+            android:background="#88000000" />
+
+    </RelativeLayout>
 
 </LinearLayout>
 <!-- From: file:/home/anddev68/Syllabus/Seachunit/app/src/main/res/layout/activity_subject_list.xml -->

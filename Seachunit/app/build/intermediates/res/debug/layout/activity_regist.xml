@@ -16,7 +16,8 @@
         android:drawableRight="@android:drawable/ic_menu_more"
         android:background="#cccccc"
         android:clickable="true"
-        android:onClick="onClickSelectLabel" />
+        android:onClick="onClickSelectLabel"
+        android:textColor="#000000" />
 
     <TextView
         android:layout_width="fill_parent"
