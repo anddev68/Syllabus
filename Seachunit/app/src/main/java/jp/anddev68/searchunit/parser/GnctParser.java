@@ -2,7 +2,6 @@ package jp.anddev68.searchunit.parser;
 
 import android.util.Log;
 
-import org.apache.http.HttpRequest;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

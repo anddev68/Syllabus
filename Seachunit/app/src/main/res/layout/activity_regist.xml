@@ -44,7 +44,6 @@
         android:layout_height="wrap_content"
         android:text="0"
         android:id="@+id/textView8"
-        android:background="@drawable/bnr012_04"
         android:gravity="bottom|right"
         android:textSize="50dp"
         android:typeface="sans"

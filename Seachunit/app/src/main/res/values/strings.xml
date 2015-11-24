@@ -1,9 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Seachunit</string>
+    <string name="app_name">しゅらばす</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!-- sql文の定義 -->
+    <string name="sql_create_table_my_class">
+        CREATE TABLE my_class(
+        _id integer primary key autoincrement,
+        user_id integer,
+        subject_id integer);
+    </string>
+    <string name="sql_create_table_subject">
+        CREATE TABLE subject(
+        _id integer primary key autoincrement,
+        name text,
+        url text,
+        grade_id integer,
+        depart_id integer);
+    </string>
+    <string name="sql_create_table_user">
+        CREATE TABLE user(
+        _id integer primary key autoincrement,
+        name text,
+        grade_id integer,
+        depart_id integer);
+    </string>
+
+
+
+
+
+
 
     <string-array name="term_array">
         <item>前期中間</item>

@@ -1,50 +1,45 @@
 package jp.anddev68.searchunit;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.net.Uri;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
-import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import jp.anddev68.searchunit.database.DatabaseAccessor;
 import jp.anddev68.searchunit.database.DatabaseHelper;
 import jp.anddev68.searchunit.parser.AbstractParser;
 import jp.anddev68.searchunit.parser.GnctParser;
-import jp.anddev68.searchunit.structure.Subject;
+import jp.anddev68.searchunit.ui.adapter.SubjectListAdapter;
+import jp.anddev68.searchunit.widget.drawer.DrawerAdapter;
 
 /**
 	教科一覧のアクティビティー
 */
 
-public class SubjectListActivity extends Activity {
+public class SubjectListActivity extends AppCompatActivity {
 
     private static final int MODE_POINT = 1;    //  点数表示モード
     private static final int MODE_REGISTER = 2;   //  点数登録モード
     private static final int MODE_SYLLABUS = 3;     //  シラバス閲覧モード
-    private static final int NON_SELECT_COLOR = Color.rgb(0x99,0x99,0x99);
-    private static final int SELECT_COLOR = Color.rgb(0x55,0x55,0x55);
+
     private int _mode;
 
     private String _grade;
@@ -67,13 +62,36 @@ public class SubjectListActivity extends Activity {
     //  一般科教科表
     ArrayList<String> gSubjectName;
 
-    ArrayAdapter<String> adapter;
+    SubjectListAdapter adapter;
+
+
+    /* Widget */
+    Toolbar toolbar;
+    ActionBarDrawerToggle toggle;
+    DrawerLayout drawerLayout;
+    ListView drawerListView;
+
+    /* Adapter */
+    DrawerAdapter drawerAdapter;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subject_list);
+
+        /* ツールバーの初期化 */
+        initToolbar();
+        /* メニュードロワーの初期化 */
+        initDrawer();
+
+        /* 初回起動時に設定画面を表示する */
+
+
+        /* 初回起動時でない場合はデータを持ってくる */
+
+
 
         //  設定画面を開くかどうかのチェックを行う
         if(configCheck()){
@@ -148,6 +166,62 @@ public class SubjectListActivity extends Activity {
 
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        toggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        toggle.onConfigurationChanged(newConfig);
+    }
+
+
+
+
+
+    /**
+     *  Drawerを初期化する
+     */
+    private void initDrawer(){
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        toggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.app_name,R.string.app_name);
+        drawerLayout.setDrawerListener(toggle);
+        toggle.setDrawerIndicatorEnabled(true);
+        drawerListView = (ListView) findViewById(R.id.drawerListView);
+        drawerAdapter = new DrawerAdapter(this);
+        drawerListView.setAdapter(drawerAdapter);
+
+    }
+
+    /**
+     *  ツールバーを初期化する
+     */
+    private void initToolbar(){
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
+
+    /**
+     * すべての学年、学科の教科データを取得する、タスクを開始する
+     */
+    private void startDownloadingAllSubjects(){
+
+    }
+
+
+
+    /**
+     * 教科データの取得終了後のハンドラー
+     */
+
+
+
+
 
     /**
      * 設定のチェック
@@ -176,27 +250,15 @@ public class SubjectListActivity extends Activity {
         String depart = pref.getString("depart","");
 
         //  ウィジェットの取得
-        textView2 = (TextView) findViewById(R.id.textView2);
+        //textView2 = (TextView) findViewById(R.id.textView2);
         listView = (ListView) findViewById(R.id.subject_list);
         rootView =(LinearLayout) findViewById(R.id.root);
-        configText = (TextView) findViewById(R.id.system_mes);
+        //configText = (TextView) findViewById(R.id.system_mes);
 
-        configText.setText("現在の設定:"+_grade+_depart+(_plusGMode?" +一般科":""));
 
-        buttonLayouts = new LinearLayout[4];
-        buttonLayouts[0] = (LinearLayout) findViewById(R.id.lbutton1);
-        buttonLayouts[1] = (LinearLayout) findViewById(R.id.lbutton2);
-        buttonLayouts[2] = (LinearLayout) findViewById(R.id.lbutton3);
-        buttonLayouts[3] = (LinearLayout) findViewById(R.id.lbutton4);
-        LinearLayout.OnClickListener listener = new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                SubjectListActivity.this.onClickLButton(v);
-            }
-        };
-        for(int i=0; i<buttonLayouts.length; i++) buttonLayouts[i].setOnClickListener(listener);
 
         //  アダプター初期化
+       /*
         adapter = new ArrayAdapter<String>(this,R.layout.custom_list_item1);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -205,6 +267,8 @@ public class SubjectListActivity extends Activity {
             }
         });
         listView.setAdapter(adapter);
+        */
+
 
         //  初期モードをセットする
         _mode = MODE_POINT; //  点数表示モード
@@ -254,14 +318,17 @@ public class SubjectListActivity extends Activity {
      */
     private void onEndTask(){
     	Log.d("", "+++onEndTask()");
-        adapter.clear();
+        //adapter.clear();
 	    DatabaseHelper helper = new DatabaseHelper(this);
 	    SQLiteDatabase db = helper.getReadableDatabase();
         allSubjectName = DatabaseAccessor.getAllSubjectName(db, _grade, _depart);
         gSubjectName = DatabaseAccessor.getAllSubjectName(db, _grade, "ALL");
-        if (!allSubjectName.isEmpty()) adapter.addAll(allSubjectName);
-        if (_plusGMode && !gSubjectName.isEmpty() && !_depart.equals("ALL")) adapter.addAll(gSubjectName);
-	    db.close();
+        adapter = new SubjectListAdapter(this);
+
+        if (!allSubjectName.isEmpty()) adapter.setSubjects(allSubjectName); //adapter.addAll(allSubjectName);
+        if (_plusGMode && !gSubjectName.isEmpty() && !_depart.equals("ALL")) adapter.setSubjects(gSubjectName); // adapter.addAll(gSubjectName);
+        listView.setAdapter(adapter);
+        db.close();
     }
 
     /**
@@ -312,30 +379,6 @@ public class SubjectListActivity extends Activity {
     }
 
 
-    /**
-     * ボタンが押された時
-     * モード切り替えor設定メニューの表示
-     */
-    private void onClickLButton(View v){
-        switch(v.getId()){
-            case R.id.lbutton1:
-                _mode = MODE_POINT;
-                setModeDisplay();
-                break;
-            case R.id.lbutton2:
-                _mode = MODE_REGISTER;
-                setModeDisplay();
-                break;
-            case R.id.lbutton3:
-                _mode = MODE_SYLLABUS;
-                setModeDisplay();
-                break;
-            case R.id.lbutton4:
-                openConfigActivity();
-                break;
-        }
-    }
-
 
 
 
@@ -362,36 +405,7 @@ public class SubjectListActivity extends Activity {
      * あとクリックラブルを外す
      */
     private void setModeDisplay(){
-        for(int i=0; i<buttonLayouts.length; i++){
-            buttonLayouts[i].setBackgroundColor(NON_SELECT_COLOR);
-            buttonLayouts[i].setClickable(true);
-        }
 
-
-        switch(_mode) {
-            case MODE_POINT:
-                textView2.setText("教科一覧[点数表示]");
-                textView2.setBackgroundResource(R.drawable.btn039_01);
-                rootView.setBackgroundResource(R.drawable.repeat_bg100_01);
-                buttonLayouts[0].setClickable(false);
-                buttonLayouts[0].setBackgroundColor(SELECT_COLOR);
-                break;
-            case MODE_REGISTER:
-                textView2.setText("教科一覧[点数登録]");
-                //textView2.setBackgroundColor(Color.rgb(0,200,0));
-                textView2.setBackgroundResource(R.drawable.btn039_04);
-                rootView.setBackgroundResource(R.drawable.repeat_bg100_04);
-                buttonLayouts[1].setBackgroundColor(SELECT_COLOR);
-                buttonLayouts[1].setClickable(false);
-                break;
-            case MODE_SYLLABUS:
-                textView2.setText("教科一覧[シラバス]");
-                textView2.setBackgroundResource(R.drawable.btn039_05);
-                rootView.setBackgroundResource(R.drawable.repeat_bg100_05);
-                buttonLayouts[2].setBackgroundColor(SELECT_COLOR);
-                buttonLayouts[2].setClickable(false);
-                break;
-        }
     }
 
 
