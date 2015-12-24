@@ -5,15 +5,17 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+
+
     <!-- sql文の定義 -->
     <string name="sql_create_table_my_class">
-        CREATE TABLE my_class(
+        CREATE TABLE my_class (
         _id integer primary key autoincrement,
         user_id integer,
         subject_id integer);
     </string>
     <string name="sql_create_table_subject">
-        CREATE TABLE subject(
+        CREATE TABLE subject (
         _id integer primary key autoincrement,
         name text,
         url text,
@@ -21,13 +23,32 @@
         depart_id integer);
     </string>
     <string name="sql_create_table_user">
-        CREATE TABLE user(
+        CREATE TABLE user (
         _id integer primary key autoincrement,
         name text,
         grade_id integer,
         depart_id integer);
     </string>
-
+    <!-- 重複する授業は登録できない制約 -->
+    <string name="sql_unique_subject">
+        create unique index unique_name on subject( depart_id,grade_id,name );
+    </string>
+    <!-- 1ユーザは同じidの授業を持てない制約 -->
+    <string name="sql_unique_my_class">
+        create unique index unique_my_class on my_class( user_id,subject_id );
+    </string>
+    <string name="sql_insert_my_class_recursively">
+        INSERT INTO my_class(subject_id,user_id)
+         SELECT subject._id, ? as user_id FROM subject
+         WHERE subject.grade_id = ? AND subject.depart_id = ?
+    </string>
+    <string name="sql_query_subjects">
+        SELECT * FROM subject WHERE grade_id = ? AND depart_id = ?
+    </string>
+    <!-- 受講取り消し -->
+    <string name="sql_delete_my_class">
+        DELETE FROM my_class WHERE subject_id = ? AND user_id = ?
+    </string>
 
 
 
@@ -58,6 +79,18 @@
         <item>一般(ALL)</item>
     </string-array>
 
+    <!-- 学科の記号 -->
+    <string-array name="depart_sign">
+        <item>M</item>
+        <item>E</item>
+        <item>J</item>
+        <item>D</item>
+        <item>C</item>
+        <item>A</item>
+        <item>G</item>
+    </string-array>
+
+
     <!-- 学科別のシラバストップURL(entryValuesと対応) -->
     <string-array name="url_array">
         <item>http://www.gifu-nct.ac.jp/syllabus/BrowsingPage/M/Mindex.html</item>
@@ -70,15 +103,17 @@
     </string-array>
 
 
+
+
     <!-- 学科(設定される値) -->
     <string-array name="depart_entryValues">
         <item>M</item>
-        <item>EE</item>
-        <item>EJ</item>
+        <item>E</item>
+        <item>J</item>
         <item>D</item>
         <item>C</item>
         <item>A</item>
-        <item>ALL</item>
+        <item>G</item>
     </string-array>
 
     <!-- 学年 -->

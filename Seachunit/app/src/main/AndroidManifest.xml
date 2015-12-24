@@ -12,18 +12,7 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity
-            android:name=".SubjectListActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name=".PrefActivity"
-            android:label="@string/title_activity_settings" >
-        </activity>
-        <activity
-            android:name=".DetailActivity"
-            android:label="@string/app_name" >
-        </activity>
+
         <activity
             android:name="MainActivity"
             android:label="@string/app_name" >
@@ -33,9 +22,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RegistActivity"
+            android:name=".ui.activity.RegisterMyClassActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name=".ui.activity.ShowSubjectActivity"
+            android:label="@string/app_name" >
+        </activity>
+
     </application>
 
 </manifest>

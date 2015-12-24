@@ -11,32 +11,29 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import jp.anddev68.searchunit.R;
-import jp.anddev68.searchunit.record.Subject;
+import jp.anddev68.searchunit.structure.Point;
 
-public class SubjectsAdapter extends RecyclerView.Adapter<SubjectsAdapter.ViewHolder> {
-    public interface OnItemClickListener{
-        void onItemClick(View v,int index);
-    }
+/**
+ * 点数一覧のカード
+ */
+public class PointsAdapter extends RecyclerView.Adapter<PointsAdapter.ViewHolder> {
 
+    LayoutInflater mLayoutInflater;
+    OnItemClickListener mListener;
+    Context mContext;
+    ArrayList<Point> mData;
 
-    private LayoutInflater mLayoutInflater;
-    private ArrayList<Subject> mDataList;
-    private static String[] sign = {"M","E","J","C","D","A","G"};
-    private OnItemClickListener mListener;
-
-
-    public SubjectsAdapter(Context context, OnItemClickListener l,ArrayList<Subject> dataList) {
+    public PointsAdapter(Context context, OnItemClickListener l,ArrayList<Point> data){
         super();
         mListener = l;
-        mLayoutInflater = LayoutInflater.from(context);
-        mDataList = dataList;
+        mContext = context;
+        mData = data;
     }
 
-    //  作成されたときにインフレ―トするだけ
     @Override
-    public SubjectsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = mLayoutInflater.inflate(R.layout.material_list_item1, parent, false);
-        final ViewHolder viewHolder = new ViewHolder(v);
+    public PointsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = mLayoutInflater.inflate(R.layout.material_card_grid_item1, parent, false);
+        final PointsAdapter.ViewHolder viewHolder = new PointsAdapter.ViewHolder(v);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -49,21 +46,18 @@ public class SubjectsAdapter extends RecyclerView.Adapter<SubjectsAdapter.ViewHo
         return viewHolder;
     }
 
-    // データサイズを返す
-    @Override
-    public int getItemCount() {
-        return mDataList.size();
-    }
-
-
-    //  アイテムをセットする
+    //  ここでアイテムをセットする
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Subject subject = mDataList.get(position);
-        holder.textView.setText(subject.name);
-        holder.iconText.setText(sign[subject.departId]);
+        Point point = mData.get(position);
+
     }
 
+
+    @Override
+    public int getItemCount() {
+        return mData.size();
+    }
 
     //  ViewHolder
     //  インフレ―トしたxmlの構造に合わせてホルダーを作成
@@ -80,5 +74,9 @@ public class SubjectsAdapter extends RecyclerView.Adapter<SubjectsAdapter.ViewHo
         }
     }
 
+
+    public interface OnItemClickListener{
+        void onItemClick(View v,int index);
+    }
 
 }

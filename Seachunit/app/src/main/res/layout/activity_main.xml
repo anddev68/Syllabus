@@ -9,27 +9,47 @@
     android:fitsSystemWindows="true">
 
     <!-- Your contents -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <view
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@color/primary"
-            class="android.support.v7.widget.Toolbar"
-            app:title="@string/app_name"
-            android:textSize="20sp"
-            android:id="@+id/toolbar" />
+        android:layout_width="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:id="@+id/content" />
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <view
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@color/primary"
+                class="android.support.v7.widget.Toolbar"
+                app:title="@string/app_name"
+                android:id="@+id/toolbar" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/content" />
+
+
+
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/fab"
+            android:src="@drawable/add_white_54x54"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            app:fabSize="normal"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+
+
+
 
 
     <android.support.design.widget.NavigationView

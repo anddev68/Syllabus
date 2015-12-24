@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="32dp"
+    android:paddingRight="32dp"
+    android:paddingTop="8dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:text="学年と学科を指定して、授業一覧を作成してください。"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:entries="@array/grade_entry"
+        android:id="@+id/spinner1" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:entries="@array/depart_entry"
+        android:id="@+id/spinner2" />
+
+
+
+
+</LinearLayout>

@@ -43,7 +43,7 @@ public class SubjectsDownloader extends AsyncTaskLoader<ArrayList<Subject>> {
                 ArrayList<Subject> subjects = parse(urls[department]);
                 //  一括処理
                 //  学科を対応するものに変更
-                for (Subject subject : subjects) subject.department = department;
+                for (Subject subject : subjects) subject.departId= department;
                 //  allに足す
                 all.addAll(subjects);
             }catch(Exception e){
@@ -87,7 +87,7 @@ public class SubjectsDownloader extends AsyncTaskLoader<ArrayList<Subject>> {
                     }
                 }
                 //  教科データ作成
-                Subject subject = new Subject(-1, text, href, grade, -1);
+                Subject subject = new Subject(text, href, grade, -1);
                 //  追加
                 subjects.add(subject);
             }
